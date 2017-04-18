@@ -48,6 +48,37 @@ describe Game do
 		end
 	end
 
-	
+	context '#calculate_move' do
+		it 'creates index for a two-dim array from normal chess indices' do
+			x = 2
+			y = "D"
+			expect(game.calculate_move(x,y)).to eq([7,4])
+		end
+	end
+
+	context '#move' do
+
+		it 'moves a white rook if current player is white' do
+			x = [2, "D"]			# White rook
+			y = [3, "D"]
+			game.move(x,y)
+			expect(game.board.tiles[6][4]).to eq("\u2659")
+		end
+
+		it 'moves a black rook if current player is black' do
+			x = [7, "F"]			# Black rook
+			y = [6, "F"]
+			expect(game.move(x,y)).to eq("\u265F")
+		end
+
+		it 'correctly removes the piece from the original place' do
+
+		end
+
+		it 'correctly moves the piece to the new place' do
+
+		end
+
+	end
 
 end
