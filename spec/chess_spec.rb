@@ -61,8 +61,7 @@ describe Game do
 		it 'moves a white rook if current player is white' do
 			x = [2, "D"]			# White rook
 			y = [3, "D"]
-			game.move(x,y)
-			expect(game.board.tiles[6][4]).to eq("\u2659")
+			expect(game.move(x,y)).to eq("\u2659")
 		end
 
 		it 'moves a black rook if current player is black' do
@@ -72,11 +71,17 @@ describe Game do
 		end
 
 		it 'correctly removes the piece from the original place' do
-
+			x = [2, "D"]			# [7][4] in the board array
+			y = [3, "D"]
+			game.move(x,y)
+			expect(game.board.tiles[7][4]).to eq(" ")
 		end
 
 		it 'correctly moves the piece to the new place' do
-
+			x = [2, "D"]			
+			y = [3, "D"]			# [6][4] in the board array
+			game.move(x,y)
+			expect(game.board.tiles[6][4]).to eq("\u2659")
 		end
 
 	end
