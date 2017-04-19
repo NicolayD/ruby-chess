@@ -1,15 +1,31 @@
-require_relative 'board.rb'
 
 class Game
 
 	attr_accessor :board, :current_player
-
-	white_player = { rook: "\u2656", knight: "\u2658", bishop: "\u2657", pawn: "\u2659", king: "\u2654", queen: "\u2655" }
-	black_player = { rook: "\u265c", knight: "\u265E", bishop: "\u265D", pawn: "\u265F", king: "\u265A", queen: "\u265B" }
+	attr_reader :white, :black
 
 	def initialize
-		@board = Board.new
+		@white = { rook: "\u2656", knight: "\u2658", bishop: "\u2657", pawn: "\u2659", king: "\u2654", queen: "\u2655" }
+		@black = { rook: "\u265c", knight: "\u265E", bishop: "\u265D", pawn: "\u265F", king: "\u265A", queen: "\u265B" }
+
+		@board = [["","A","B","C","D","E","F","G","H"],
+							[8,  @black[:rook],@black[:knight],@black[:bishop],@black[:queen],@black[:king],@black[:bishop],@black[:knight],@black[:rook]],
+							[7,  @black[:pawn],@black[:pawn],@black[:pawn],@black[:pawn],@black[:pawn],@black[:pawn],@black[:pawn],@black[:pawn]],
+							[6,  " "," "," "," "," "," "," "," "],
+							[5,  " "," "," "," "," "," "," "," "],
+							[4,  " "," "," "," "," "," "," "," "],
+							[3,  " "," "," "," "," "," "," "," "],
+							[2,  @white[:pawn],@white[:pawn],@white[:pawn],@white[:pawn],@white[:pawn],@white[:pawn],@white[:pawn],@white[:pawn]],
+						  [1,  @white[:rook],@white[:knight],@white[:bishop],@white[:queen],@white[:king],@white[:bishop],@white[:knight],@white[:rook]]]
 		@current_player = :white
+
+	end
+
+	def show_board
+		@board.map do |line| 
+			puts line.map { |square| square.to_s.rjust(3) }.join(" ") 
+			puts
+		end
 	end
 
 	def swap_players
@@ -61,16 +77,16 @@ class Game
 	def move start,finish
 		start_pos = calculate_move start[0],start[1]
 		end_pos = calculate_move finish[0],finish[1]
-		piece = @board.tiles[start_pos[0]][start_pos[1]]
-		@board.tiles[start_pos[0]][start_pos[1]] = " "
-		@board.tiles[end_pos[0]][end_pos[1]] = piece
+		piece = @board[start_pos[0]][start_pos[1]]
+		@board[start_pos[0]][start_pos[1]] = " "
+		@board[end_pos[0]][end_pos[1]] = piece
 	end
 
 end
 
 # Sample game
-=begin
-board = Board.new
+#=begin
+game = Game.new
 
-board.show_board
-=end
+game.show_board
+#=end
