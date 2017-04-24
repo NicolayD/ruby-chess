@@ -21,6 +21,8 @@ class Game
 						  [1,  @white[:rook],@white[:knight],@white[:bishop],@white[:queen],@white[:king],@white[:bishop],@white[:knight],@white[:rook]]]
 
 		@current_player = :white
+		@white_check = false
+		@black_check = false
 
 	end
 
@@ -32,23 +34,30 @@ class Game
 	end
 
 	def swap_players
-		@current_player == :white ? :black : :white
+		@current_player == :white ? @current_player = :black : @current_player = :white
 	end
 
 
 	def choose_piece
-		puts "Which piece do you want to move?"			# Add current player check here
+		puts "#{@current_player.capitalize}. Which piece do you want to move?"			# Add current player check here
 		answer = gets.chomp
 		possible_choices = {}
 		possible_choices[:num] = [1,2,3,4,5,6,7,8]
 		possible_choices[:let] = ["A", "B", "C", "D", "E", "F", "G", "H"]
-		until possible_choices[:num].include?(answer[0].to_i) && possible_choices[:let].include?(answer[1])
+		until possible_choices[:num].include?(answer[0].to_i) && possible_choices[:let].include?(answer[1].capitalize)
 			puts "Please choose proper coordinates."
 			answer = gets.chomp
 		end
 
-		@current_piece_index = answer
+		@current_piece_index = find_piece answer
 		@current_piece = @board[current_piece_index[0]][@current_piece_index[1]]
+
+		if @current_player == :white && !@white.has_value?(@current_piece)
+			until @white.has_value?(@current_piece)
+				puts 'You must choose your own colour.'
+				choose_piece
+			end
+		end
 	end
 
 
@@ -72,7 +81,7 @@ class Game
 		when 8
 			ind << 1
 		end
-		case x[1]
+		case x[1].capitalize
 		when "A"			# Vertical
 			ind << 1
 		when "B"
@@ -94,7 +103,7 @@ class Game
 		ind
 	end
 
-	def possible_moves index=find_piece(@current_piece_index)
+	def possible_moves index=@current_piece_index
 		hor = index[0].to_i
 		ver = index[1].to_i
 
@@ -102,7 +111,7 @@ class Game
 
 		piece = @board[hor][ver]
 
-		case piece 										# Saves the array indices of the move
+		case piece 										# Saves the array indices of every possible move
 		when @white[:pawn]
 			moves.push [hor-1,ver] if @board[hor-1][ver] != nil && !@white.has_value?(@board[hor-1][ver])
 			moves.push [hor-1,ver-1] if @black.has_value? @board[hor-1][ver-1] 
@@ -111,7 +120,7 @@ class Game
 		when @black[:pawn]
 			moves.push [hor+1,ver] if @board[hor+1,ver] != nil && !@black.has_value?(@board[hor+1][ver])
 			moves.push [hor+1,ver-1] if @white.has_value? @board[hor+1][ver-1]
-			moves.push [hor+1,ver+1] if @white.has_vale? @board[hor+1][ver+1]
+			moves.push [hor+1,ver+1] if @white.has_value? @board[hor+1][ver+1]
 
 		when @white[:king]
 			moves.push [hor+1,ver] if @board[hor+1][ver] == " " || @black.has_value?(@board[hor+1][ver])
@@ -122,6 +131,18 @@ class Game
 			moves.push [hor-1,ver-1] if @board[hor-1][ver-1] == " " || @black.has_value?(@board[hor-1][ver-1])
 			moves.push [hor-1,ver+1] if @board[hor-1][ver+1] == " " || @black.has_value?(@board[hor-1][ver+1])
 			moves.push [hor+1,ver-1] if @board[hor+1][ver-1] == " " || @black.has_value?(@board[hor+1][ver-1])
+			
+			@board.each_with_index do |row,horiz|
+				row.each_with_index do |cur_piece,vert|
+					if @black.has_value? cur_piece
+						black_moves = possible_moves(horiz.to_s + vert.to_s)
+						if black_moves.include? @current_piece_index
+							moves.delete([horiz,vert])
+						end
+					end
+				end
+			end
+
 
 		when @black[:king]
 			moves.push [hor+1,ver] if @board[hor+1][ver] == " " || @white.has_value?(@board[hor+1][ver])
@@ -132,307 +153,382 @@ class Game
 			moves.push [hor-1,ver-1] if @board[hor-1][ver-1] == " " || @white.has_value?(@board[hor-1][ver-1])
 			moves.push [hor-1,ver+1] if @board[hor-1][ver+1] == " " || @white.has_value?(@board[hor-1][ver+1])
 			moves.push [hor+1,ver-1] if @board[hor+1][ver-1] == " " || @white.has_value?(@board[hor+1][ver-1])
+			
+			@board.each_with_index do |row,horiz|
+				row.each_with_index do |cur_piece,vert|
+					if @white.has_value? cur_piece
+						white_moves = possible_moves(horiz.to_s + vert.to_s)
+						if white_moves.include? @current_piece_index
+							moves.delete([horiz,vert])
+						end
+					end
+				end
+			end
 
 		when @white[:queen]				# Same as white rook + white bishop
 			right = ver + 1
-			right_tile = @board[hor][right]
-			while right < 8 && !@white.has_value?(right_tile) && right_tile != nil 
-				moves.push [hor,right]
-				break if @black.has_value? right_tile
-				right += 1
+			if right < 8
 				right_tile = @board[hor][right]
+				while right < 8 && !@white.has_value?(right_tile) && right_tile != nil 
+					moves.push [hor,right]
+					break if @black.has_value? right_tile
+					right += 1
+					right_tile = @board[hor][right]
+				end
 			end
 			left = ver - 1
-			left_tile = @board[hor][left]
-			while left > 0 && !@white.has_value?(left_tile) && left_tile != nil
-				moves.push [hor,left]
-				break if @black.has_value? left_tile
-				left -= 1
+			if left > 0
 				left_tile = @board[hor][left]
+				while left > 0 && !@white.has_value?(left_tile) && left_tile != nil
+					moves.push [hor,left]
+					break if @black.has_value? left_tile
+					left -= 1
+					left_tile = @board[hor][left]
+				end
 			end
 			up = hor - 1
-			up_tile = @board[up][ver]
-			while up > 0 && !@white.has_value?(up_tile) && up_tile != nil
-				moves.push [up,ver]
-				break if @black.has_value? up_tile
-				up -= 1
+			if up > 0
 				up_tile = @board[up][ver]
+				while up > 0 && !@white.has_value?(up_tile) && up_tile != nil
+					moves.push [up,ver]
+					break if @black.has_value? up_tile
+					up -= 1
+					up_tile = @board[up][ver]
+				end
 			end
 			down = hor + 1
-			down_tile = @board[down][ver]
-			while down < 8 && !@white.has_value?(down_tile) && down_tile != nil
-				moves.push [down,ver]
-				break if @black.has_value? down_tile
-				down += 1
+			if down < 8
 				down_tile = @board[down][ver]
+				while down < 8 && !@white.has_value?(down_tile) && down_tile != nil
+					moves.push [down,ver]
+					break if @black.has_value? down_tile
+					down += 1
+					down_tile = @board[down][ver]
+				end
 			end
 
 			east = ver + 1
 			north = hor - 1
-			north_east = @board[north][east]
-			while east < 8 && north > 0 && !@white.has_value?(north_east) && north_east != nil 
-				moves.push [north,east]
-				break if @black.has_value? north_east
-				east += 1
-				north -= 1
+			if east < 8 && north > 0
 				north_east = @board[north][east]
+				while east < 8 && north > 0 && !@white.has_value?(north_east) && north_east != nil 
+					moves.push [north,east]
+					break if @black.has_value? north_east
+					east += 1
+					north -= 1
+					north_east = @board[north][east]
+				end
 			end
 			west = ver - 1
 			north = hor - 1
-			north_west = @board[north][west]
-			while west > 0 && north > 0 && !@white.has_value?(north_west) && north_west != nil
-				moves.push [north,west]
-				break if @black.has_value? north_west
-				west -= 1
-				north -= 1
-				left_tile = @board[north][west]
+			if west > 0 && north > 0
+				north_west = @board[north][west]
+				while west > 0 && north > 0 && !@white.has_value?(north_west) && north_west != nil
+					moves.push [north,west]
+					break if @black.has_value? north_west
+					west -= 1
+					north -= 1
+					left_tile = @board[north][west]
+				end
 			end
 			south = hor + 1
 			east = ver + 1
-			south_east = @board[south][east]
-			while south < 8 && east < 8 && !@white.has_value?(south_east) && south_east != nil
-				moves.push [south,east]
-				break if @black.has_value? south_east
-				south += 1
-				east += 1
+			if south < 8 && east < 8
 				south_east = @board[south][east]
+				while south < 8 && east < 8 && !@white.has_value?(south_east) && south_east != nil
+					moves.push [south,east]
+					break if @black.has_value? south_east
+					south += 1
+					east += 1
+					south_east = @board[south][east]
+				end
 			end
 			south = hor + 1
 			west = ver - 1
-			south_west = @board[south][west]
-			while south < 8 && west > 0 && !@white.has_value?(south_west) && south_west != nil
-				moves.push [south,west]
-				break if @black.has_value? south_west
-				south += 1
-				west -= 1
+			if south < 8 && west > 0
 				south_west = @board[south][west]
+				while south < 8 && west > 0 && !@white.has_value?(south_west) && south_west != nil
+					moves.push [south,west]
+					break if @black.has_value? south_west
+					south += 1
+					west -= 1
+					south_west = @board[south][west]
+				end
 			end
 
 		when @black[:queen]				# Same as black rook + black bishop
 			right = ver + 1
-			right_tile = @board[hor][right]
-			while right < 8 && !@black.has_value?(right_tile) && right_tile != nil 
-				moves.push [hor,right]
-				break if @white.has_value? right_tile
-				right += 1
+			if right < 8
 				right_tile = @board[hor][right]
+				while right < 8 && !@black.has_value?(right_tile) && right_tile != nil 
+					moves.push [hor,right]
+					break if @white.has_value? right_tile
+					right += 1
+					right_tile = @board[hor][right]
+				end
 			end
 			left = ver - 1
-			left_tile = @board[hor][left]
-			while left > 0 && !@black.has_value?(left_tile) && left_tile != nil
-				moves.push [hor,left]
-				break if @white.has_value? left_tile
-				left -= 1
+			if left > 0
 				left_tile = @board[hor][left]
+				while left > 0 && !@black.has_value?(left_tile) && left_tile != nil
+					moves.push [hor,left]
+					break if @white.has_value? left_tile
+					left -= 1
+					left_tile = @board[hor][left]
+				end
 			end
 			up = hor - 1
-			up_tile = @board[up][ver]
-			while up > 0 && !@black.has_value?(up_tile) && up_tile != nil
-				moves.push [up,ver]
-				break if @white.has_value? up_tile
-				up -= 1
+			if up > 0
 				up_tile = @board[up][ver]
+				while up > 0 && !@black.has_value?(up_tile) && up_tile != nil
+					moves.push [up,ver]
+					break if @white.has_value? up_tile
+					up -= 1
+					up_tile = @board[up][ver]
+				end
 			end
 			down = hor + 1
-			down_tile = @board[down][ver]
-			while down < 8 && !@black.has_value?(down_tile) && down_tile != nil
-				moves.push [down,ver]
-				break if @white.has_value? down_tile
-				down += 1
+			if down < 8
 				down_tile = @board[down][ver]
+				while down < 8 && !@black.has_value?(down_tile) && down_tile != nil
+					moves.push [down,ver]
+					break if @white.has_value? down_tile
+					down += 1
+					down_tile = @board[down][ver]
+				end
 			end
 
 			east = ver + 1
 			north = hor - 1
-			north_east = @board[north][east]
-			while east < 8 && north > 0 && !@black.has_value?(north_east) && north_east != nil 
-				moves.push [north,east]
-				break if @white.has_value? north_east
-				east += 1
-				north -= 1
+			if east < 8 && north > 0
 				north_east = @board[north][east]
+				while east < 8 && north > 0 && !@black.has_value?(north_east) && north_east != nil 
+					moves.push [north,east]
+					break if @white.has_value? north_east
+					east += 1
+					north -= 1
+					north_east = @board[north][east]
+				end
 			end
 			west = ver - 1
 			north = hor - 1
-			north_west = @board[north][west]
-			while west > 0 && north > 0 && !@black.has_value?(north_west) && north_west != nil
-				moves.push [north,west]
-				break if @white.has_value? north_west
-				west -= 1
-				north -= 1
-				left_tile = @board[north][west]
+			if west > 0 && north > 0
+				north_west = @board[north][west]
+				while west > 0 && north > 0 && !@black.has_value?(north_west) && north_west != nil
+					moves.push [north,west]
+					break if @white.has_value? north_west
+					west -= 1
+					north -= 1
+					left_tile = @board[north][west]
+				end
 			end
 			south = hor + 1
 			east = ver + 1
-			south_east = @board[south][east]
-			while south < 8 && east < 8 && !@black.has_value?(south_east) && south_east != nil
-				moves.push [south,east]
-				break if @white.has_value? south_east
-				south += 1
-				east += 1
+			if south < 8 && east < 8
 				south_east = @board[south][east]
+				while south < 8 && east < 8 && !@black.has_value?(south_east) && south_east != nil
+					moves.push [south,east]
+					break if @white.has_value? south_east
+					south += 1
+					east += 1
+					south_east = @board[south][east]
+				end
 			end
 			south = hor + 1
 			west = ver - 1
-			south_west = @board[south][west]
-			while south < 8 && west > 0 && !@black.has_value?(south_west) && south_west != nil
-				moves.push [south,west]
-				break if @white.has_value? south_west
-				south += 1
-				west -= 1
+			if south < 8 && west > 0
 				south_west = @board[south][west]
+				while south < 8 && west > 0 && !@black.has_value?(south_west) && south_west != nil
+					moves.push [south,west]
+					break if @white.has_value? south_west
+					south += 1
+					west -= 1
+					south_west = @board[south][west]
+				end
 			end
 
 		when @white[:rook]
 			right = ver + 1
-			right_tile = @board[hor][right]
-			while right < 8 && !@white.has_value?(right_tile) && right_tile != nil 
-				moves.push [hor,right]
-				break if @black.has_value? right_tile
-				right += 1
+			if right < 8
 				right_tile = @board[hor][right]
+				while right < 8 && !@white.has_value?(right_tile) && right_tile != nil 
+					moves.push [hor,right]
+					break if @black.has_value? right_tile
+					right += 1
+					right_tile = @board[hor][right]
+				end
 			end
 			left = ver - 1
-			left_tile = @board[hor][left]
-			while left > 0 && !@white.has_value?(left_tile) && left_tile != nil
-				moves.push [hor,left]
-				break if @black.has_value? left_tile
-				left -= 1
+			if left > 0
 				left_tile = @board[hor][left]
+				while left > 0 && !@white.has_value?(left_tile) && left_tile != nil
+					moves.push [hor,left]
+					break if @black.has_value? left_tile
+					left -= 1
+					left_tile = @board[hor][left]
+				end
 			end
 			up = hor - 1
-			up_tile = @board[up][ver]
-			while up > 0 && !@white.has_value?(up_tile) && up_tile != nil
-				moves.push [up,ver]
-				break if @black.has_value? up_tile
-				up -= 1
+			if up > 0
 				up_tile = @board[up][ver]
+				while up > 0 && !@white.has_value?(up_tile) && up_tile != nil
+					moves.push [up,ver]
+					break if @black.has_value? up_tile
+					up -= 1
+					up_tile = @board[up][ver]
+				end
 			end
 			down = hor + 1
-			down_tile = @board[down][ver]
-			while down < 8 && !@white.has_value?(down_tile) && down_tile != nil
-				moves.push [down,ver]
-				break if @black.has_value? down_tile
-				down += 1
+			if down < 8
 				down_tile = @board[down][ver]
+				while down < 8 && !@white.has_value?(down_tile) && down_tile != nil
+					moves.push [down,ver]
+					break if @black.has_value? down_tile
+					down += 1
+					down_tile = @board[down][ver]
+				end
 			end
 
 		when @black[:rook]
 			right = ver + 1
-			right_tile = @board[hor][right]
-			while right < 8 && !@black.has_value?(right_tile) && right_tile != nil 
-				moves.push [hor,right]
-				break if @white.has_value? right_tile
-				right += 1
+			if right < 8
 				right_tile = @board[hor][right]
+				while right < 8 && !@black.has_value?(right_tile) && right_tile != nil 
+					moves.push [hor,right]
+					break if @white.has_value? right_tile
+					right += 1
+					right_tile = @board[hor][right]
+				end
 			end
 			left = ver - 1
-			left_tile = @board[hor][left]
-			while left > 0 && !@black.has_value?(left_tile) && left_tile != nil
-				moves.push [hor,left]
-				break if @white.has_value? left_tile
-				left -= 1
+			if left > 0
 				left_tile = @board[hor][left]
+				while left > 0 && !@black.has_value?(left_tile) && left_tile != nil
+					moves.push [hor,left]
+					break if @white.has_value? left_tile
+					left -= 1
+					left_tile = @board[hor][left]
+				end
 			end
 			up = hor - 1
-			up_tile = @board[up][ver]
-			while up > 0 && !@black.has_value?(up_tile) && up_tile != nil
-				moves.push [up,ver]
-				break if @white.has_value? up_tile
-				up -= 1
+			if up > 0
 				up_tile = @board[up][ver]
+				while up > 0 && !@black.has_value?(up_tile) && up_tile != nil
+					moves.push [up,ver]
+					break if @white.has_value? up_tile
+					up -= 1
+					up_tile = @board[up][ver]
+				end
 			end
 			down = hor + 1
-			down_tile = @board[down][ver]
-			while down < 8 && !@black.has_value?(down_tile) && down_tile != nil
-				moves.push [down,ver]
-				break if @white.has_value? down_tile
-				down += 1
+			if down < 8
 				down_tile = @board[down][ver]
+				while down < 8 && !@black.has_value?(down_tile) && down_tile != nil
+					moves.push [down,ver]
+					break if @white.has_value? down_tile
+					down += 1
+					down_tile = @board[down][ver]
+				end
 			end
 
 		when @white[:bishop]
 			east = ver + 1
 			north = hor - 1
-			north_east = @board[north][east]
-			while east < 8 && north > 0 && !@white.has_value?(north_east) && north_east != nil 
-				moves.push [north,east]
-				break if @black.has_value? north_east
-				east += 1
-				north -= 1
+			if east < 8 && north > 0
 				north_east = @board[north][east]
+				while east < 8 && north > 0 && !@white.has_value?(north_east) && north_east != nil 
+					moves.push [north,east]
+					break if @black.has_value? north_east
+					east += 1
+					north -= 1
+					north_east = @board[north][east]
+				end
 			end
 			west = ver - 1
 			north = hor - 1
-			north_west = @board[north][west]
-			while west > 0 && north > 0 && !@white.has_value?(north_west) && north_west != nil
-				moves.push [north,west]
-				break if @black.has_value? north_west
-				west -= 1
-				north -= 1
-				left_tile = @board[north][west]
+			if west > 0 && north > 0
+				north_west = @board[north][west]
+				while west > 0 && north > 0 && !@white.has_value?(north_west) && north_west != nil
+					moves.push [north,west]
+					break if @black.has_value? north_west
+					west -= 1
+					north -= 1
+					left_tile = @board[north][west]
+				end
 			end
 			south = hor + 1
 			east = ver + 1
-			south_east = @board[south][east]
-			while south < 8 && east < 8 && !@white.has_value?(south_east) && south_east != nil
-				moves.push [south,east]
-				break if @black.has_value? south_east
-				south += 1
-				east += 1
+			if south < 8 && east < 8
 				south_east = @board[south][east]
+				while south < 8 && east < 8 && !@white.has_value?(south_east) && south_east != nil
+					moves.push [south,east]
+					break if @black.has_value? south_east
+					south += 1
+					east += 1
+					south_east = @board[south][east]
+				end
 			end
 			south = hor + 1
 			west = ver - 1
-			south_west = @board[south][west]
-			while south < 8 && west > 0 && !@white.has_value?(south_west) && south_west != nil
-				moves.push [south,west]
-				break if @black.has_value? south_west
-				south += 1
-				west -= 1
+			if south < 8 && west > 0
 				south_west = @board[south][west]
+				while south < 8 && west > 0 && !@white.has_value?(south_west) && south_west != nil
+					moves.push [south,west]
+					break if @black.has_value? south_west
+					south += 1
+					west -= 1
+					south_west = @board[south][west]
+				end
 			end
 
 		when @black[:bishop]
 			east = ver + 1
 			north = hor - 1
-			north_east = @board[north][east]
-			while east < 8 && north > 0 && !@black.has_value?(north_east) && north_east != nil 
-				moves.push [north,east]
-				break if @white.has_value? north_east
-				east += 1
-				north -= 1
+			if east < 8 && north > 0
 				north_east = @board[north][east]
+				while east < 8 && north > 0 && !@black.has_value?(north_east) && north_east != nil 
+					moves.push [north,east]
+					break if @white.has_value? north_east
+					east += 1
+					north -= 1
+					north_east = @board[north][east]
+				end
 			end
 			west = ver - 1
 			north = hor - 1
-			north_west = @board[north][west]
-			while west > 0 && north > 0 && !@black.has_value?(north_west) && north_west != nil
-				moves.push [north,west]
-				break if @white.has_value? north_west
-				west -= 1
-				north -= 1
-				left_tile = @board[north][west]
+			if west > 0 && north > 0
+				north_west = @board[north][west]
+				while west > 0 && north > 0 && !@black.has_value?(north_west) && north_west != nil
+					moves.push [north,west]
+					break if @white.has_value? north_west
+					west -= 1
+					north -= 1
+					left_tile = @board[north][west]
+				end
 			end
 			south = hor + 1
 			east = ver + 1
-			south_east = @board[south][east]
-			while south < 8 && east < 8 && !@black.has_value?(south_east) && south_east != nil
-				moves.push [south,east]
-				break if @white.has_value? south_east
-				south += 1
-				east += 1
+			if south < 8 && east < 8
 				south_east = @board[south][east]
+				while south < 8 && east < 8 && !@black.has_value?(south_east) && south_east != nil
+					moves.push [south,east]
+					break if @white.has_value? south_east
+					south += 1
+					east += 1
+					south_east = @board[south][east]
+				end
 			end
 			south = hor + 1
 			west = ver - 1
-			south_west = @board[south][west]
-			while south < 8 && west > 0 && !@black.has_value?(south_west) && south_west != nil
-				moves.push [south,west]
-				break if @white.has_value? south_west
-				south += 1
-				west -= 1
+			if south < 8 && west > 0
 				south_west = @board[south][west]
+				while south < 8 && west > 0 && !@black.has_value?(south_west) && south_west != nil
+					moves.push [south,west]
+					break if @white.has_value? south_west
+					south += 1
+					west -= 1
+					south_west = @board[south][west]
+				end
 			end
 
 		when @white[:knight]
@@ -462,37 +558,35 @@ class Game
 	def check? position
 		king_position = []
 		moves = possible_moves(position)
-		moves.each_with_index do |row,hor|
-			row.each_with_index do |piece,ver|
-				if piece == @white[:king] && @current_player == :black
-					puts 'White king is in check.'
-					king_position << hor
-					king_position << ver
-					if possible_moves(king_position) == nil
-						@checkmate == true
-						return 'Checkmate. Black wins.'
-					else
-					 return @white_check == true
-					end
-				elsif piece == @black[:king] && @current_player == :white
-					puts 'Black king is in check.'
-					king_position << hor
-					king_position << ver
-					if possible_moves(king_position) == nil
-						@checkmate == true
-						return 'Checkmate. White wins.'
-					else
-						return @black_check == true
-					end
+		moves.each do |move|
+			if @board[move[0]][move[1]] == @white[:king] && @current_player == :black
+				puts 'White king is in check.'
+				king_position << move[0]
+				king_position << move[1]
+				if possible_moves(king_position) == nil
+					@checkmate == true
+					return 'Checkmate. Black wins.'
+				else
+				 return @white_check == true
+				end
+			elsif @board[move[0]][move[1]] == @black[:king] && @current_player == :white
+				puts 'Black king is in check.'
+				king_position << move[0]
+				king_position << move[1]
+				if possible_moves(king_position) == nil
+					@checkmate == true
+					return 'Checkmate. White wins.'
+				else
+					return @black_check == true
 				end
 			end
 		end
 
-		@white_check,@black_chek = false, false
+		@white_check,@black_chek = false,false
 	end
 
 	def move start,finish
-		start_pos = find_piece start
+		start_pos = @current_piece_index
 		end_pos = find_piece finish
 
 		piece = @board[start_pos[0]][start_pos[1]]
@@ -565,7 +659,7 @@ class Game
 			end
 		end
 
-		check? finish
+		check? end_pos
 
 		if @white_check
 			@current_player = :white
@@ -588,6 +682,7 @@ class Game
 				move start,finish
 			end
 		end
+		end?
 	end
 
 	def end?
@@ -599,7 +694,7 @@ class Game
 			@board.each_with_index do |row,hor|
 				row.each_with_index do |piece,ver|
 					if @white.has_value? piece
-						player_moves << possible_moves(hor+ver)
+						player_moves << possible_moves(hor.to_s + ver.to_s)
 					end
 				end
 			end
@@ -607,7 +702,7 @@ class Game
 			@board.each_with_index do |row,hor|
 				row.each_with_index do |piece,ver|
 					if @black.has_value? piece
-						player_moves << possible_moves(hor+ver)
+						player_moves << possible_moves(hor.to_s + ver.to_s)
 					end
 				end
 			end

@@ -2,11 +2,9 @@ require_relative 'chess.rb'
 
 game = Game.new
 
+game.show_board
+
 until game.end?
-
-	game.show_board
-
-	puts "Which piece do you want to move?"
 
 	game.choose_piece
 
@@ -16,4 +14,8 @@ until game.end?
 	game.move game.current_piece_index,finish
 
 	game.swap_players
+
+	game.show_board
+
+	game.end?
 end
