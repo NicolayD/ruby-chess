@@ -15,8 +15,8 @@ class Rook
 	end
 
 	def possible_moves board,position=self.position
-		hor = position[0]
-		ver = position[1]
+		hor = position[0].to_i
+		ver = position[1].to_i
 		@possible_moves = []
 
 		right = ver + 1

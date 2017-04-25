@@ -16,9 +16,9 @@ class Pawn
 
 	# Create an array with all possible moves such as [[3,3],[4,5], etc.] 
 	def possible_moves board,position=self.position
-		@possible_moves = []
 		hor = position[0].to_i
 		ver = position[1].to_i
+		@possible_moves = []
 
 		if self.colour == :white
 			@possible_moves.push [hor-1,ver] if board[hor-1][ver] == " "

@@ -8,7 +8,7 @@ require_relative 'knight'
 require_relative 'rook'
 
 class Chess
-	attr_accessor :board, :current_player, :chosen_piece, :move_to
+	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, :white_checked, :black_checked, :checkmate
 
 	def initialize
 		@board = [[" ","A","B","C","D","E","F","G","H"],
@@ -23,6 +23,10 @@ class Chess
 
 		@current_player = :white
 		@move_to = []
+		@move_from = []
+		@white_checked = false
+		@black_checked = false
+		@checkmate = false
 	end
 
 	def show_board
@@ -71,14 +75,14 @@ class Chess
 			from = gets.chomp
 		end
 
-		start = convert_coordinates from
-		@chosen_piece = @board[start[0]][start[1]]
+		@move_from = convert_coordinates from
+		@chosen_piece = @board[@move_from[0]][@move_from[1]]
 
 		until @chosen_piece != " " && @chosen_piece.respond_to?(:colour) && @chosen_piece.colour == @current_player
 			puts 'You must choose your own piece.'
 			from = gets.chomp
-			start = convert_coordinates from
-			@chosen_piece = @board[start[0]][start[1]]
+			@move_from = convert_coordinates from
+			@chosen_piece = @board[@move_from[0]][@move_from[1]]
 		end
 
 		puts 'Where do you want to move it?'
@@ -90,7 +94,7 @@ class Chess
 		@move_to = convert_coordinates to
 	end
 
-	def move from=@chosen_piece.position,to=@move_to
+	def move from=@move_from,to=@move_to
 
 		moves = @chosen_piece.possible_moves @board
 
@@ -104,12 +108,90 @@ class Chess
 			choose_piece
 			move
 		end
+
+		if @checkmate
+			return "Checkmate! #{@current_player} wins."
+		end
 	end
+
+	def check?
+		all_white_moves = []
+		all_black_moves = []
+
+		@board.each do |row|
+			row.each do |piece|
+				if piece.respond_to?(:colour)
+					moves = piece.possible_moves(@board)
+					moves.each do |move| 
+						piece.colour == :white ? all_white_moves << move : all_black_moves << move
+					end
+				end
+			end
+		end
+
+		all_white_moves.each do |position| 
+			if @board[position[0]][position[1]].is_a?(King) && @board[position[0]][position[1]].colour == :black
+				@black_checked = true
+			end
+		end
+
+		all_black_moves.each do |position|
+			if @board[position[0]][position[1]].is_a?(King) && @board[position[0]][position[1]].colour == :white
+				@white_checked = true
+			end
+		end
+
+		if @white_checked == true || @black_checked == true
+			return true
+		else
+			return false
+		end
+	end
+
+	def checkmate?
+		@board.each do |row|
+			row.each do |piece|
+				if piece.is_a?(King)
+					if piece.possible_moves(@board).empty? && (@white_checked || @black_checked)
+					 @checkmate = true
+					end
+				end
+			end
+		end
+	end
+
 end
 
 =begin
 class Game
 
+	def check? position
+		king_position = []
+		moves = possible_moves(position)
+		moves.each do |move|
+			if @board[move[0]][move[1]] == @white[:king] && @current_player == :black
+				puts 'White king is in check.'
+				king_position << move[0]
+				king_position << move[1]
+				if possible_moves(king_position) == nil
+					@checkmate == true
+					return 'Checkmate. Black wins.'
+				else
+				 return @white_check == true
+				end
+			elsif @board[move[0]][move[1]] == @black[:king] && @current_player == :white
+				puts 'Black king is in check.'
+				king_position << move[0]
+				king_position << move[1]
+				if possible_moves(king_position) == nil
+					@checkmate == true
+					return 'Checkmate. White wins.'
+				else
+					return @black_check == true
+				end
+			end
+		end
+	end
 
 	def move start,finish
 		start_pos = @current_piece_index
@@ -185,33 +267,6 @@ class Game
 			end
 		end
 
-		def check? position
-		king_position = []
-		moves = possible_moves(position)
-		moves.each do |move|
-			if @board[move[0]][move[1]] == @white[:king] && @current_player == :black
-				puts 'White king is in check.'
-				king_position << move[0]
-				king_position << move[1]
-				if possible_moves(king_position) == nil
-					@checkmate == true
-					return 'Checkmate. Black wins.'
-				else
-				 return @white_check == true
-				end
-			elsif @board[move[0]][move[1]] == @black[:king] && @current_player == :white
-				puts 'Black king is in check.'
-				king_position << move[0]
-				king_position << move[1]
-				if possible_moves(king_position) == nil
-					@checkmate == true
-					return 'Checkmate. White wins.'
-				else
-					return @black_check == true
-				end
-			end
-		end
-
 		@white_check,@black_chek = false,false
 		end
 
@@ -238,6 +293,7 @@ class Game
 				move start,finish
 			end
 		end
+
 		end?
 	end
 
