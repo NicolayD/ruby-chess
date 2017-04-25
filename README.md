@@ -6,3 +6,7 @@ The game will use the unicode chess pieces.
 Currently, the rspec version is 2.14 as it is the last stable version for Windows, but I will update it once I refactor the code on a different OS.
 
 It will be developed slowly and pushed gradually to github.
+
+Edit: 25.04.2017 - Currently developing a modular version of the game with separate classes for all pieces in a separate branch.
+Basic functionality works properly. The players can choose only their own pieces and can capture the opponent's pieces except the king.
+I have yet to add check, mate and draw logic.
