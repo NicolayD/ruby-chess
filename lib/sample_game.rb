@@ -4,14 +4,21 @@ game = Game.new
 
 game.show_board
 
+
+p game.board[7][1].possible_moves game.board
+p game.board[7][1].is_a? Pawn
+
+=begin
+
 until game.end?
 
-	game.choose_piece
+	puts 'Which piece do you want to move?'
+	from = gets.chomp
 
 	puts 'Where do you want to move it?'
-	finish = gets.chomp
+	to = gets.chomp
 
-	game.move game.current_piece_index,finish
+	game.move from,to
 
 	game.swap_players
 
@@ -19,3 +26,4 @@ until game.end?
 
 	game.end?
 end
+=end
