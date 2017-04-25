@@ -10,6 +10,8 @@ class Bishop
 		elsif @colour == :black
 			@symbol = "\u265D"
 		end
+
+		@possible_moves = []
 	end
 
 	def possible_moves board,position=self.position

@@ -10,6 +10,8 @@ class Queen
 		elsif @colour == :black
 			@symbol = "\u265B"
 		end
+
+		@possible_moves = []
 	end
 
 	def possible_moves board,position=self.position

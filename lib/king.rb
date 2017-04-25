@@ -10,6 +10,7 @@ class King
 		elsif @colour == :black
 			@symbol = "\u265A"
 		end
+		
 		@possible_moves = []
 	end
 
