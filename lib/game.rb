@@ -17,6 +17,12 @@ while true
 
 	game.move
 
+	if game.checkmate
+		puts "Checkmate! #{game.current_player} wins."
+		game.show_board
+		exit
+	end
+
 	game.swap_players
 
 end
