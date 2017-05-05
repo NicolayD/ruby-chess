@@ -65,12 +65,10 @@ class Chess
 		when "G" then coordinates << 7
 		when "H" then coordinates << 8
 		end
-
 		coordinates
 	end
 
 	def choose_piece
-
 		puts "#{@current_player.capitalize}. Which piece do you want to move?"
 		from = gets.chomp
 		until from.size == 2 && (1..8).include?(from[0].to_i) && ("A".."H").include?(from[1].capitalize)
@@ -125,7 +123,6 @@ class Chess
 			choose_piece
 			move
 		end
-
 		checkmate?
 	end
 
@@ -226,7 +223,6 @@ class Chess
 									@board[pos_move[0]][pos_move[1]] = checked_piece
 									throw :no_checkmate
 								end
-								
 								@board[pos_move[0]][pos_move[1]] = checked_piece
 							end
 						end
