@@ -7,6 +7,5 @@ Currently, the rspec version is 2.14 as it is the last stable version for Window
 
 It will be developed slowly and pushed gradually to github.
 
-Edit: 25.04.2017 - Currently developing a modular version of the game with separate classes for all pieces in a separate branch.
-Basic functionality works properly. The players can choose only their own pieces and can capture the opponent's pieces except the king.
-I have yet to add check, mate and draw logic.
+Edit: 05.05.2017 - Basic game logic works fine. Check and checkmate work, the checked player must do choose a move out of the checked position.
+I have to add promotion, draw possibility, and an option to save the game.

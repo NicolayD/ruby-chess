@@ -1,4 +1,4 @@
-STDOUT.sync = true				# For display in Git Bash
+STDOUT.sync = true	# For display in Git Bash
 
 require_relative 'pawn'
 require_relative 'bishop'
@@ -45,8 +45,8 @@ class Chess
 
 	def convert_coordinates input
 		coordinates = []
-		case input[0].to_i			# Accept a string as an argument. First char is number, second char is a letter.
-		when 1	then coordinates << 8			# Horizontal
+		case input[0].to_i	# Accept a string as an argument. First char is number, second char is a letter.
+		when 1 then coordinates << 8	# Horizontal
 		when 2 then coordinates << 7
 		when 3 then coordinates << 6
 		when 4 then coordinates << 5
@@ -129,8 +129,8 @@ class Chess
 		checkmate?
 	end
 
-	def calculate_moves					# Encapsulate the logic so that the check can be done without calculating the possible moves every time, hence falling into an infinite loop.
-		@all_white_moves = []			# Add instance variables. Refactor check, and then use the new instance variables to check every move in the checkmate method.
+	def calculate_moves
+		@all_white_moves = []
 		@all_black_moves = []
 
 		@board.each do |row|
@@ -145,37 +145,7 @@ class Chess
 		end
 	end
 
-	def check?			# Check logic works fine. Have to work on the checkmate more.
-=begin
-		all_white_moves = []
-		all_black_moves = []
-		@white_checked = false
-		@black_checked = false
-
-		@board.each do |row|
-			row.each do |piece|
-				if piece.respond_to?(:colour)
-					moves = piece.possible_moves(@board)
-					moves.each do |move| 
-						piece.colour == :white ? all_white_moves << move : all_black_moves << move
-					end
-				end
-			end
-		end
-
-
-		@all_white_moves.each do |position| 
-			if @board[position[0]][position[1]].is_a?(King) && @board[position[0]][position[1]].colour == :black
-				@black_checked = true
-			end
-		end
-
-		@all_black_moves.each do |position|
-			if @board[position[0]][position[1]].is_a?(King) && @board[position[0]][position[1]].colour == :white
-				@white_checked = true
-			end
-		end
-=end
+	def check?
 		@white_checked = false
 		@black_checked = false
 
@@ -201,39 +171,39 @@ class Chess
 		end
 	end
 
-	def checkmate?																					# Doesn't properly return true.
-		if @white_checked && @current_player == :black  			# Because the check is at the end of the turn, after the move of the enemy.	
+	def checkmate?
+		if @white_checked && @current_player == :black # Because the check is at the end of the turn, after the move of the enemy.	
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|																	
-				row.each_with_index do |piece,ver| 								# As the next works only for the white king, the 'hor' and 'ver' coordinates will be his.
+				row.each_with_index do |piece,ver| 	# As the next works only for the king, the 'hor' and 'ver' coordinates will be his.
 					if piece.is_a?(King) && piece.colour == :white
 						if piece.possible_moves(@board).empty?
 						  @checkmate = true
 						else
-							@checkmate = true																								# NEXT FEW LINES HOLD THE KEY
-							@all_white_moves.each do |possible_move|
-								checked_piece = @board[possible_move[0]][possible_move[1]]			# Maybe it's here. The King's moves also become X's and do not count.
-								if piece.possible_moves(@board).include?(possible_move) && piece.possible_moves(@board).count(possible_move) == 1					# Because we need to count the king's moves with the king. The rest can by any sign or piece.
-									@board[possible_move[0]][possible_move[1]] = @board[hor][ver]	# This will not work because another piece can have the same possible move.
-									check?																												# It might work if the possible_moves has it only once and it's a possible move for the king.
+							@checkmate = true
+							@all_white_moves.each do |pos_move|
+								checked_piece = @board[pos_move[0]][pos_move[1]]
+								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1	# This means it's only the king's move.
+									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]	
+									check?
 								else
-									@board[possible_move[0]][possible_move[1]] = :X								# Doesn't matter what it is, it just has to not be a piece of the enemy.
+									@board[pos_move[0]][pos_move[1]] = :X	# Doesn't matter what it is, it just has to not be a piece of the enemy.
 									check?
 								end
 								if !@white_checked
 									@checkmate = false																					
-									@board[possible_move[0]][possible_move[1]] = checked_piece
+									@board[pos_move[0]][pos_move[1]] = checked_piece
 									throw :no_checkmate
 								end
 								
-								@board[possible_move[0]][possible_move[1]] = checked_piece
+								@board[pos_move[0]][pos_move[1]] = checked_piece
 							end
 						end
 					end
 				end
 			end
 			end
-		elsif @black_checked && @current_player == :white 		# Because the check is at the end of the turn, not the beginning of the next.
+		elsif @black_checked && @current_player == :white 		# Because the check is at the end of the turn.
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|
 				row.each_with_index do |piece,ver|
@@ -241,28 +211,23 @@ class Chess
 						if piece.possible_moves(@board).empty?
 							@checkmate = true
 						else
-							p @all_black_moves
 							@checkmate = true
-							@all_black_moves.each do |possible_move|
-								checked_piece = @board[possible_move[0]][possible_move[1]]
-								p piece.possible_moves(@board)
-								if piece.possible_moves(@board).include?(possible_move) && piece.possible_moves(@board).count(possible_move) == 1		# This means it's only the kings move.
-									p piece
-									@board[possible_move[0]][possible_move[1]] = @board[hor][ver]																			# Hence this is the only case we must use the king himself when we check for check.
+							@all_black_moves.each do |pos_move|
+								checked_piece = @board[pos_move[0]][pos_move[1]]
+								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1	# This means it's only the king's move.
+									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]	# Hence this is the only case we must use the king himself when we check for check.
 									check?
-									p @black_checked
 								else
-									@board[possible_move[0]][possible_move[1]] = :X			# Doesn't matter what it is, it just has to not be a piece of the enemy.
+									@board[pos_move[0]][pos_move[1]] = :X	# Doesn't matter what it is, it just has to not be a piece of the enemy.
 									check?
-									p @black_checked
 								end
 								if !@black_checked
 									@checkmate = false
-									@board[possible_move[0]][possible_move[1]] = checked_piece
+									@board[pos_move[0]][pos_move[1]] = checked_piece
 									throw :no_checkmate
 								end
 								
-								@board[possible_move[0]][possible_move[1]] = checked_piece
+								@board[pos_move[0]][pos_move[1]] = checked_piece
 							end
 						end
 					end
@@ -273,200 +238,3 @@ class Chess
 		@checkmate
 	end
 end
-
-=begin
-class Game
-
-	def check? position
-		king_position = []
-		moves = possible_moves(position)
-		moves.each do |move|
-			if @board[move[0]][move[1]] == @white[:king] && @current_player == :black
-				puts 'White king is in check.'
-				king_position << move[0]
-				king_position << move[1]
-				if possible_moves(king_position) == nil
-					@checkmate == true
-					return 'Checkmate. Black wins.'
-				else
-				 return @white_check == true
-				end
-			elsif @board[move[0]][move[1]] == @black[:king] && @current_player == :white
-				puts 'Black king is in check.'
-				king_position << move[0]
-				king_position << move[1]
-				if possible_moves(king_position) == nil
-					@checkmate == true
-					return 'Checkmate. White wins.'
-				else
-					return @black_check == true
-				end
-			end
-		end
-	end
-
-	def move start,finish
-		start_pos = @current_piece_index
-		end_pos = find_piece finish
-
-		piece = @board[start_pos[0]][start_pos[1]]
-
-		if @white_check
-			until !@white_check
-				puts 'You are in check. Choose again.'
-				puts 'Move piece:'
-				start = gets.chomp
-				puts 'Move to:'
-				finish = gets.chomp
-				move start,finish
-			end
-		elsif @black_check
-			until !@black_check
-				puts 'You are in check. Choose again.'
-				puts 'Move piece:'
-				start = gets.chomp
-				puts 'Move to:'
-				finish = gets.chomp
-				move start,finish
-			end
-		end
-
-		if @current_player == :white && !@white.has_value?(piece)		# The current player check is not working properly
-			puts 'You must move a white piece.'
-			puts 'Please choose again.'
-			start = gets.chomp
-			finish = gets.chomp
-			move start,finish
-		end
-		if @current_player == :black && !@black.has_value?(piece)
-			puts 'You must move a black piece.'
-			puts 'Please choose again.'
-			puts 'Move tile:'
-			start = gets.chomp
-			puts 'Move to:'
-			finish = gets.chomp
-			move start,finish
-		end
-
-		moves = possible_moves(start_pos)
-		if @current_player == :white
-			if moves.include?(end_pos) && @board[end_pos[0]][end_pos[1]] != @black[:king]
-				@board[start_pos[0]][start_pos[1]] = " "
-				@board[end_pos[0]][end_pos[1]] = piece
-			else
-				puts 'You cannot take the king.'
-				puts 'Choose another move.'
-				puts 'Move tile:'
-				start = gets.chomp
-				puts 'Move to:'
-				finish = gets.chomp
-				move start,finish
-			end
-		end
-
-		if @current_player == :black
-			if moves.include?(end_pos) && @board[end_pos[0]][end_pos[1]] != @white[:king]
-				@board[start_pos[0]][start_pos[1]] = " "
-				@board[end_pos[0]][end_pos[1]] = piece
-			else
-				puts 'You cannot take the king.'
-				puts 'Choose another move.'
-				puts 'Move tile:'
-				start = gets.chomp
-				puts 'Move to:'
-				finish = gets.chomp
-				move start,finish
-			end
-		end
-
-		@white_check,@black_chek = false,false
-		end
-
-		check? end_pos
-
-		if @white_check
-			@current_player = :white
-			until !@white_check
-				puts 'You are in check. Choose again.'
-				puts 'Move piece:'
-				start = gets.chomp
-				puts 'Move to:'
-				finish = gets.chomp
-				move start,finish
-			end
-		elsif @black_check
-			@current_player = :black
-			until !@black_check
-				puts 'You are in check. Choose again.'
-				puts 'Move piece:'
-				start = gets.chomp
-				puts 'Move to:'
-				finish = gets.chomp
-				move start,finish
-			end
-		end
-
-		end?
-	end
-
-	def end?
-		return true if @checkmate
-
-		# Check for stalemate
-		player_moves = []
-		if @current_player == :white
-			@board.each_with_index do |row,hor|
-				row.each_with_index do |piece,ver|
-					if @white.has_value? piece
-						player_moves << possible_moves(hor.to_s + ver.to_s)
-					end
-				end
-			end
-		elsif @current_player == :black
-			@board.each_with_index do |row,hor|
-				row.each_with_index do |piece,ver|
-					if @black.has_value? piece
-						player_moves << possible_moves(hor.to_s + ver.to_s)
-					end
-				end
-			end
-		end
-
-		return draw == true if player_moves == nil
-
-		# Check for impossibility of checkmate
-
-		pieces_on_board = []
-		@board.each_with_index do |row,hor|
-			row.each_with_index do |piece,ver|
-				if @white.has_value?(piece) || @black.has_value?(piece)
-					pieces_on_board << piece
-				end
-			end
-		end
-
-		if pieces_on_board.size == 2 # Two kings.
-			return draw == true
-		elsif pieces_on_board.size == 3 && (pieces_on_board.include?(@white[:bishop]) || pieces_on_board.include?(@black[:bishop]))
-			return draw == true
-		elsif pieces_on_board.size == 3 && (pieces_on_board.include?(@white[:knight]) || pieces_on_board.include?(@black[:knight]))
-			return draw == true
-		elsif pieces_on_board.size == 4 && pieces_on_board.include?(@white[:bishop]) && pieces_on_board.include?(@black[:bishop])
-			@board.each_with_index do |row,hor|
-				row.each_with_index do |piece,ver|
-					if piece == @white[:bishop]
-						white_bishop_pos = [hor,ver]
-					elsif piece == @black[:bishop]
-						black_bishop_pos = [hor,ver]
-					end
-				end
-			end
-			if (white_bishop_pos[0]+white_bishop_pos[1]).odd? && (black_bishop_pos[0]+black_bishop_pos[1]).odd?
-				return draw == true		# Bishops on same colour
-			elsif !(white_bishop_pos[0]+white_bishop_pos[1]).odd? && !(black_bishop_pos[0]+black_bishop_pos[1]).odd?
-				return draw == true		# Bishops on same colour
-			end
-		end
-	end
-end
-=end
