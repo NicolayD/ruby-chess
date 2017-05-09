@@ -151,11 +151,41 @@ describe Chess do
 	end
 
 	context '#check?' do
+		it 'returns false by default' do
+			expect(game.check?).to be_false
+		end
 
+		it 'returns true when the king is checked' do
+			game.chosen_piece = game.board[7][5] # White pawn
+			game.move([7,5],[6,5])
+			game.swap_players
+			game.chosen_piece = game.board[2][6] # Black pawn
+			game.move([2,6],[3,6])
+			game.swap_players
+			game.chosen_piece = game.board[8][4] # White queen
+			game.move([8,4],[4,8])
+			expect(game.check?).to be_true
+		end
 	end
 
 	context '#checkmate?' do
+		it 'returns false by default' do
+			expect(game.checkmate?).to be_false
+		end
 
+		it 'returns true when the king is checkmated' do
+			game.chosen_piece = game.board[7][6]
+			game.move([7,6],[6,6])
+			game.swap_players
+			game.chosen_piece = game.board[2][5]
+			game.move([2,5],[4,5])
+			game.swap_players
+			game.chosen_piece = game.board[7][7]
+			game.move([7,7],[5,7])
+			game.swap_players
+			game.chosen_piece = game.board[1][4]
+			game.move([1,4],[5,8])
+			expect(game.checkmate?).to be_true
+		end
 	end
-
 end
