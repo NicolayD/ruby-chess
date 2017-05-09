@@ -168,7 +168,7 @@ class Chess
 		end
 	end
 
-	def checkmate?			# Refactor queen and bishop diagonal moves.
+	def checkmate?
 		if @white_checked && @current_player == :black # Because the check is at the end of the turn, after the move of the enemy.	
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|																	
@@ -200,7 +200,7 @@ class Chess
 				end
 			end
 			end
-		elsif @black_checked && @current_player == :white 		# Because the check is at the end of the turn.
+		elsif @black_checked && @current_player == :white # Because the check is at the end of the turn.
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|
 				row.each_with_index do |piece,ver|

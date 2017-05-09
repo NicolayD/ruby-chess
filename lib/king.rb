@@ -21,7 +21,7 @@ class King
 
 		@possible_moves.push [hor+1,ver] if hor < 7 && (board[hor+1][ver] == " " || (board[hor+1][ver].respond_to?(:colour) && board[hor+1][ver].colour != self.colour))
 		@possible_moves.push [hor,ver+1] if ver < 7 && (board[hor][ver+1] == " " || (board[hor][ver+1].respond_to?(:colour) && board[hor][ver+1].colour != self.colour))
-		@possible_moves.push [hor+1,ver+1] if hor < 7 && ver < 7 && (board[hor+1][ver+1] == " " || (board[hor][ver+1].respond_to?(:colour) && board[hor][ver+1].colour != self.colour))
+		@possible_moves.push [hor+1,ver+1] if hor < 7 && ver < 7 && (board[hor+1][ver+1] == " " || (board[hor+1][ver+1].respond_to?(:colour) && board[hor+1][ver+1].colour != self.colour))
 		@possible_moves.push [hor-1,ver] if hor > 1 && (board[hor-1][ver] == " " || (board[hor-1][ver].respond_to?(:colour) && board[hor-1][ver].colour != self.colour))
 		@possible_moves.push [hor,ver-1] if ver > 1 && (board[hor][ver-1] == " " || (board[hor][ver-1].respond_to?(:colour) && board[hor][ver-1].colour != self.colour))
 		@possible_moves.push [hor-1,ver-1] if hor > 1 && ver > 1 && (board[hor-1][ver-1] == " " || (board[hor-1][ver-1].respond_to?(:colour) && board[hor-1][ver-1].colour != self.colour))

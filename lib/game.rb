@@ -3,7 +3,6 @@ require_relative 'chess'
 game = Chess.new
 
 while true
-
 	game.show_board
 
 	if game.check?
