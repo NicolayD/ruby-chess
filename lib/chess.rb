@@ -83,7 +83,7 @@ class Chess
 			puts 'You must choose your own piece.'
 			from = gets.chomp
 			@move_from = convert_coordinates from
-			@chosen_piece = @board[@move_from[0]][@move_from[1]].clone
+			@chosen_piece = @board[@move_from[0]][@move_from[1]]
 		end
 
 		puts 'Where do you want to move it?'
