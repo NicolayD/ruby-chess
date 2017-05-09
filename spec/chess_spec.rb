@@ -131,13 +131,22 @@ describe Chess do
 			expect(game.board[7][2]).to eq(" ")
 		end
 
-		it 'can capture enemy pieces' do
+		it 'lets white capture black' do
 			game.board[5][5] = Queen.new(:white,[5,5])
 			expect(game.board[5][5].colour).to eq(:white)
 			expect(game.board[2][8].colour).to eq(:black)
 			game.chosen_piece = game.board[5][5]
 			game.move([5,5],[2,8])
 			expect(game.board[2][8].colour).to eq(:white)
+		end
+
+		it 'lets black capture white' do
+			game.board[5][5] = Queen.new(:black,[5,5])
+			expect(game.board[5][5].colour).to eq(:black)
+			expect(game.board[7][3].colour).to eq(:white)
+			game.chosen_piece = game.board[5][5]
+			game.move([5,5],[7,3])
+			expect(game.board[7][3].colour).to eq(:black)
 		end
 	end
 
