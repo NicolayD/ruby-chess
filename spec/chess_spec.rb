@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'chess'
-require 'queen'
 
 describe Chess do
 
@@ -135,10 +134,10 @@ describe Chess do
 		it 'can capture enemy pieces' do
 			game.board[5][5] = Queen.new(:white,[5,5])
 			expect(game.board[5][5].colour).to eq(:white)
-			expect(game.board[2][5].colour).to eq(:black)
+			expect(game.board[2][8].colour).to eq(:black)
 			game.chosen_piece = game.board[5][5]
-			game.move([5,5],[2,5])
-			expect(game.board[2][5].colour).to eq(:white)
+			game.move([5,5],[2,8])
+			expect(game.board[2][8].colour).to eq(:white)
 		end
 	end
 
