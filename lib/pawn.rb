@@ -31,7 +31,6 @@ class Pawn
 			@possible_moves.push [hor+1,ver-1] if board[hor+1][ver-1].respond_to?(:colour) && board[hor+1][ver-1].colour != self.colour
 			@possible_moves.push [hor+1,ver+1] if board[hor+1][ver+1].respond_to?(:colour) && board[hor+1][ver+1].colour != self.colour
 		end
-		p @possible_moves if self.colour == :black # Debugging
 		@possible_moves
 	end
 

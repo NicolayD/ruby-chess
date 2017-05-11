@@ -9,7 +9,7 @@ require_relative 'rook'
 
 class Chess
 	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, :white_checked, :black_checked, :checkmate
-	attr_accessor :all_white_moves, :all_black_moves
+	attr_accessor :all_white_moves, :all_black_moves, :capture_turns
 
 	def initialize
 		@board = [[" ","A","B","C","D","E","F","G","H"],
