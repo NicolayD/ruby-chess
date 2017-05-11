@@ -82,6 +82,10 @@ class Chess
 		until @chosen_piece != " " && @chosen_piece.respond_to?(:colour) && @chosen_piece.colour == @current_player
 			puts 'You must choose your own piece.'
 			from = gets.chomp
+			until from.size == 2 && (1..8).include?(from[0].to_i) && ("A".."H").include?(from[1].capitalize)
+				puts "Please choose proper coordinates."
+				from = gets.chomp
+			end
 			@move_from = convert_coordinates from
 			@chosen_piece = @board[@move_from[0]][@move_from[1]]
 		end
@@ -123,7 +127,12 @@ class Chess
 			choose_piece
 			move
 		end
+
 		checkmate?
+
+		if @chosen_piece.is_a?(Pawn)
+			@chosen_piece.promote(@board)
+		end
 	end
 
 	def calculate_moves
@@ -192,7 +201,6 @@ class Chess
 									@board[pos_move[0]][pos_move[1]] = checked_piece
 									throw :no_checkmate
 								end
-								
 								@board[pos_move[0]][pos_move[1]] = checked_piece
 							end
 						end

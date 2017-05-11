@@ -31,6 +31,45 @@ class Pawn
 			@possible_moves.push [hor+1,ver-1] if board[hor+1][ver-1].respond_to?(:colour) && board[hor+1][ver-1].colour != self.colour
 			@possible_moves.push [hor+1,ver+1] if board[hor+1][ver+1].respond_to?(:colour) && board[hor+1][ver+1].colour != self.colour
 		end
+		p @possible_moves if self.colour == :black # Debugging
 		@possible_moves
+	end
+
+	def promote board
+		hor = self.position[0]
+		ver = self.position[1]
+		if self.colour == :white && hor == 1
+			puts "You must promote your pawn."
+			puts "Queen, knight, rook or bishop?"
+			choice = gets.chomp
+			choices = ["queen", "knight", "rook", "bishop"]
+			until choices.include? choice.downcase
+				puts "You must choose a proper piece."
+				choice = gets.chomp
+			end
+			case choice.downcase
+			when "queen" then board[hor][ver] = Queen.new(:white,[hor,ver])
+			when "knight" then board[hor][ver] = Knight.new(:white,[hor,ver])
+			when "rook" then board[hor][ver] = Rook.new(:white,[hor,ver])
+			when "bishop" then board[hor][ver] = Bishop.new(:white,[hor,ver])
+			end
+		end
+
+		if self.colour == :black && hor == 8
+			puts "You must promote your pawn."
+			puts "Queen, knight, rook or bishop?"
+			choice = gets.chomp
+			choices = ["queen", "knight", "rook", "bishop"]
+			until choices.include? choice.downcase
+				puts "You must choose a proper piece."
+				choice = gets.chomp
+			end
+			case choice.downcase
+			when "queen" then board[hor][ver] = Queen.new(:black,[hor,ver])
+			when "knight" then board[hor][ver] = Knight.new(:black,[hor,ver])
+			when "rook" then board[hor][ver] = Rook.new(:black,[hor,ver])
+			when "bishop" then board[hor][ver] = Bishop.new(:black,[hor,ver])
+			end
+		end
 	end
 end
