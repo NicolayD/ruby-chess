@@ -7,5 +7,5 @@ Currently, the rspec version is 2.14 as it is the last stable version for Window
 
 It will be developed slowly and pushed gradually to github.
 
-Edit: 05.05.2017 - Basic game logic works fine. Check and checkmate work, the checked player must do choose a move out of the checked position.
-I have to add promotion, draw possibility, and an option to save the game.
+Edit: 11.05.2017 - Basic game logic works fine. Check and checkmate work, the checked player must do choose a move out of the checked position.
+I have to add draw possibility and an option to save the game.
