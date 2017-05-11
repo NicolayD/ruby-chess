@@ -19,5 +19,11 @@ while true
 		exit
 	end
 
+	if game.draw?
+		puts "Draw."
+		game.show_board
+		exit
+	end
+
 	game.swap_players
 end

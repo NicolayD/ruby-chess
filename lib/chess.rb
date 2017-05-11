@@ -9,7 +9,7 @@ require_relative 'rook'
 
 class Chess
 	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, :white_checked, :black_checked, :checkmate
-	attr_accessor :all_white_moves, :all_black_moves, :capture_turns
+	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move
 
 	def initialize
 		@board = [[" ","A","B","C","D","E","F","G","H"],
@@ -30,6 +30,7 @@ class Chess
 		@checkmate = false
 		@all_white_moves = []
 		@all_black_moves = []
+		@no_capture_or_pawn_move = 0
 	end
 
 	def show_board
@@ -121,6 +122,12 @@ class Chess
 				calculate_moves
 				check?
 			end
+
+			if chosen_position != " " || @chosen_piece.is_a?(Pawn)
+				@no_capture_or_pawn_move = 0
+			else
+				@no_capture_or_pawn_move += 1
+			end
 		else
 			puts 'You cannot move there.'
 			puts 'Choose another move.'
@@ -149,6 +156,13 @@ class Chess
 				end
 			end
 		end
+	end
+
+	def draw?
+		return true if @no_capture_or_pawn_move == 75	# Automatic draw at 75 moves without a capture or a pawn move
+		calculate_moves
+		return true if !@white_checked && @all_white_moves.empty? # Stalemate
+		return true if !@black_checked && @all_black_moves.empty? # Stalemate
 	end
 
 	def check?

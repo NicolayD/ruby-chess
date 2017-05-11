@@ -19,14 +19,14 @@ class King
 		ver = position[1].to_i
 		@possible_moves = []	# I have to refactor this to make it less cluttered.
 
-		@possible_moves.push [hor+1,ver] if hor < 8 && (board[hor+1][ver] == " " || board[hor+1][ver].colour != self.colour)
-		@possible_moves.push [hor,ver+1] if ver < 8 && (board[hor][ver+1] == " " || board[hor][ver+1].colour != self.colour)
-		@possible_moves.push [hor+1,ver+1] if hor < 8 && ver < 8 && (board[hor+1][ver+1] == " " || board[hor+1][ver+1].colour != self.colour)
-		@possible_moves.push [hor-1,ver] if hor > 1 && (board[hor-1][ver] == " " || board[hor-1][ver].colour != self.colour)
-		@possible_moves.push [hor,ver-1] if ver > 1 && (board[hor][ver-1] == " " || board[hor][ver-1].colour != self.colour)
-		@possible_moves.push [hor-1,ver-1] if hor > 1 && ver > 1 && (board[hor-1][ver-1] == " " || board[hor-1][ver-1].colour != self.colour)
-		@possible_moves.push [hor-1,ver+1] if hor > 1 && ver < 8 && (board[hor-1][ver+1] == " " || board[hor-1][ver+1].colour != self.colour)
-		@possible_moves.push [hor+1,ver-1] if hor < 8 && ver > 1 && (board[hor+1][ver-1] == " " || board[hor+1][ver-1].colour != self.colour)
+		@possible_moves.push [hor+1,ver] if hor < 8 && (board[hor+1][ver] == " " || (board[hor+1][ver].respond_to?(:colour) && board[hor+1][ver].colour != self.colour))
+		@possible_moves.push [hor,ver+1] if ver < 8 && (board[hor][ver+1] == " " || (board[hor][ver+1].respond_to?(:colour) && board[hor][ver+1].colour != self.colour))
+		@possible_moves.push [hor+1,ver+1] if hor < 8 && ver < 8 && (board[hor+1][ver+1] == " " || (board[hor+1][ver+1].respond_to?(:colour) && board[hor+1][ver+1].colour != self.colour))
+		@possible_moves.push [hor-1,ver] if hor > 1 && (board[hor-1][ver] == " " || (board[hor-1][ver].respond_to?(:colour) && board[hor-1][ver].colour != self.colour))
+		@possible_moves.push [hor,ver-1] if ver > 1 && (board[hor][ver-1] == " " || (board[hor][ver-1].respond_to?(:colour) && board[hor][ver-1].colour != self.colour))
+		@possible_moves.push [hor-1,ver-1] if hor > 1 && ver > 1 && (board[hor-1][ver-1] == " " || (board[hor-1][ver-1].respond_to?(:colour) && board[hor-1][ver-1].colour != self.colour))
+		@possible_moves.push [hor-1,ver+1] if hor > 1 && ver < 8 && (board[hor-1][ver+1] == " " || (board[hor-1][ver+1].respond_to?(:colour) && board[hor-1][ver+1].colour != self.colour))
+		@possible_moves.push [hor+1,ver-1] if hor < 8 && ver > 1 && (board[hor+1][ver-1] == " " || (board[hor+1][ver-1].respond_to?(:colour) && board[hor+1][ver-1].colour != self.colour))
 		@possible_moves
 	end
 end
