@@ -21,6 +21,7 @@ while true
 
 	if game.draw?
 		puts "Draw."
+		puts game.draw_message
 		game.show_board
 		exit
 	end

@@ -59,7 +59,7 @@ class Queen
 				@possible_moves.push [down,ver]
 				break if down_tile.respond_to?(:colour) && down_tile.colour != self.colour
 				down += 1
-				down_tile = board[down][ver]
+				down_tile = board[down][ver] if down <= 8
 			end
 		end
 

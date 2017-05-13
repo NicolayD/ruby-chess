@@ -53,13 +53,13 @@ class Rook
 		end
 
 		down = hor + 1
-		if down < 8
+		if down <= 8
 			down_tile = board[down][ver]
-			while down < 8 && (down_tile == " " || (down_tile.respond_to?(:colour) && down_tile.colour != self.colour))
+			while down <= 8 && (down_tile == " " || (down_tile.respond_to?(:colour) && down_tile.colour != self.colour))
 				@possible_moves.push [down,ver]
 				break if down_tile.respond_to?(:colour) && down_tile.colour != self.colour
 				down += 1
-				down_tile = board[down][ver]
+				down_tile = board[down][ver] if down <= 8
 			end
 		end
 

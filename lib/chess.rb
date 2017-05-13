@@ -9,7 +9,7 @@ require_relative 'rook'
 
 class Chess
 	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, :white_checked, :black_checked, :checkmate
-	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move
+	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move, :draw_message, :tiles_reached
 
 	def initialize
 		@board = [[" ","A","B","C","D","E","F","G","H"],
@@ -31,6 +31,7 @@ class Chess
 		@all_white_moves = []
 		@all_black_moves = []
 		@no_capture_or_pawn_move = 0
+		@tiles_reached = {}
 	end
 
 	def show_board
@@ -128,6 +129,27 @@ class Chess
 			else
 				@no_capture_or_pawn_move += 1
 			end
+
+			# For the draw check.
+			# Record every time a piece (except a pawn) reaches a specific tile repeatedly.
+			# Use a hash with tiles as keys.
+			# Every tile itself is a hash with object ids for the pieces as keys.
+			# And numbers of time they reached that tile as values.
+
+
+			if !@chosen_piece.is_a?(Pawn)
+				if @tiles_reached.has_key?(to)
+					if @tiles_reached[to].has_key?(@chosen_piece.object_id)
+						@tiles_reached[to][@chosen_piece.object_id] += 1
+					else
+						@tiles_reached[to][@chosen_piece.object_id] = 1
+					end
+				else 
+					@tiles_reached[to] = {}
+					@tiles_reached[to][@chosen_piece.object_id] = 1
+				end
+			end
+
 		else
 			puts 'You cannot move there.'
 			puts 'Choose another move.'
@@ -158,11 +180,33 @@ class Chess
 		end
 	end
 
-	def draw?
-		return true if @no_capture_or_pawn_move == 75	# Automatic draw at 75 moves without a capture or a pawn move
+	def draw?	# Add separate messages for the different draws.
+		if @no_capture_or_pawn_move == 75	# Automatic draw at 75 moves without a capture or a pawn move
+			@draw_message = "No piece captured or pawn moved for 75 moves."
+			return true
+		end
 		calculate_moves
-		return true if !@white_checked && @all_white_moves.empty? # Stalemate
-		return true if !@black_checked && @all_black_moves.empty? # Stalemate
+		if !@white_checked && @all_white_moves.empty?
+			@draw_message = "Stalemate."
+			return true
+		end
+		if !@black_checked && @all_black_moves.empty?
+			@draw_message = "Stalemate."
+			return true 
+		end
+		
+		# Threefold repetition is not automatic.
+		# That's why fivefold repetition is used.
+
+		@tiles_reached.each do |tile,pieces|
+			if pieces.has_value? 5
+				@draw_message = "Fivefold repetition of the same move."
+				return true
+			end
+		end
+
+		false
+
 	end
 
 	def check?
