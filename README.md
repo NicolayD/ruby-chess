@@ -7,5 +7,5 @@ Currently, the rspec version is 2.14 as it is the last stable version for Window
 
 It will be developed slowly and pushed gradually to github.
 
-Edit: 11.05.2017 - Basic game logic works fine. Check and checkmate work, the checked player must choose a move out of the checked position.
-I have to develop more draw checks and add an option to save the game.
+Edit: 15.05.2017 - Game logic works fine. Check and checkmate work, the checked player must choose a move out of the checked position.
+Draw checks also work (only automatic draws). Save game option is also available. Only castling and en passant are not available yet. Some of the verbose code needs refactoring.

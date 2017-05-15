@@ -1,4 +1,6 @@
 require_relative 'chess'
+require_relative 'save_game'
+include SaveGame
 
 puts 'Do you want to load a game? (y/n)'
 answer = gets.chomp
