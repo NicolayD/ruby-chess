@@ -1,5 +1,7 @@
+require_relative 'moves'
 
 class Knight
+	include Moves
 	attr_accessor :symbol, :colour, :position, :possible_moves
 
 	def initialize colour,position
@@ -19,14 +21,14 @@ class Knight
 		ver = position[1].to_i
 		@possible_moves = []	# I have to refactor this to make it less cluttered.
 
-		@possible_moves.push [hor-2,ver-1] if hor > 2 && ver > 1 && (board[hor-2][ver-1] == " " || (board[hor-2][ver-1].respond_to?(:colour) && board[hor-2][ver-1].colour != self.colour))
-		@possible_moves.push [hor-2,ver+1] if hor > 2 && ver < 8 && (board[hor-2][ver+1] == " " || (board[hor-2][ver+1].respond_to?(:colour) && board[hor-2][ver+1].colour != self.colour))
-		@possible_moves.push [hor+2,ver-1] if hor < 7 && ver > 1 && (board[hor+2][ver-1] == " " || (board[hor+2][ver-1].respond_to?(:colour) && board[hor+2][ver-1].colour != self.colour))
-		@possible_moves.push [hor+2,ver+1] if hor < 7 && ver < 8 && (board[hor+2][ver+1] == " " || (board[hor+2][ver+1].respond_to?(:colour) && board[hor+2][ver+1].colour != self.colour))
-		@possible_moves.push [hor-1,ver+2] if hor > 1 && ver < 7 && (board[hor-1][ver+2] == " " || (board[hor-1][ver+2].respond_to?(:colour) && board[hor-1][ver+2].colour != self.colour))
-		@possible_moves.push [hor+1,ver+2] if hor < 8 && ver < 7 && (board[hor+1][ver+2] == " " || (board[hor+1][ver+2].respond_to?(:colour) && board[hor+1][ver+2].colour != self.colour))
-		@possible_moves.push [hor-1,ver-2] if hor > 1 && ver > 2 && (board[hor-1][ver-2] == " " || (board[hor-1][ver-2].respond_to?(:colour) && board[hor-1][ver-2].colour != self.colour))
-		@possible_moves.push [hor+1,ver-2] if hor < 8 && ver > 2 && (board[hor+1][ver-2] == " " || (board[hor+1][ver-2].respond_to?(:colour) && board[hor+1][ver-2].colour != self.colour))
+		@possible_moves.push [hor-2,ver-1] if hor > 2 && ver > 1 && not_ally?(board,hor-2,ver-1)
+		@possible_moves.push [hor-2,ver+1] if hor > 2 && ver < 8 && not_ally?(board,hor-2,ver+1)
+		@possible_moves.push [hor+2,ver-1] if hor < 7 && ver > 1 && not_ally?(board,hor+2,ver-1)
+		@possible_moves.push [hor+2,ver+1] if hor < 7 && ver < 8 && not_ally?(board,hor+2,ver+1)
+		@possible_moves.push [hor-1,ver+2] if hor > 1 && ver < 7 && not_ally?(board,hor-1,ver+2)
+		@possible_moves.push [hor+1,ver+2] if hor < 8 && ver < 7 && not_ally?(board,hor+1,ver+2)
+		@possible_moves.push [hor-1,ver-2] if hor > 1 && ver > 2 && not_ally?(board,hor-1,ver-2)
+		@possible_moves.push [hor+1,ver-2] if hor < 8 && ver > 2 && not_ally?(board,hor+1,ver-2)
 
 		@possible_moves
 	end

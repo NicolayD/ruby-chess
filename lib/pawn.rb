@@ -1,5 +1,7 @@
+require_relative 'moves'
 
 class Pawn
+	include Moves
 	attr_accessor :symbol, :colour, :position, :possible_moves
 
 	def initialize colour,position
@@ -23,13 +25,13 @@ class Pawn
 		if self.colour == :white
 			@possible_moves.push [hor-1,ver] if board[hor-1][ver] == " "
 			@possible_moves.push [hor-2,ver] if hor == 7 && board[hor-2][ver] == " "
-			@possible_moves.push [hor-1,ver-1] if board[hor-1][ver-1].respond_to?(:colour) && board[hor-1][ver-1].colour != self.colour
-			@possible_moves.push [hor-1,ver+1] if board[hor-1][ver+1].respond_to?(:colour) && board[hor-1][ver+1].colour != self.colour
+			@possible_moves.push [hor-1,ver-1] if enemy? board,hor-1,ver-1
+			@possible_moves.push [hor-1,ver+1] if enemy? board,hor-1,ver+1
 		elsif self.colour == :black
 			@possible_moves.push [hor+1,ver] if board[hor+1][ver] == " "
 			@possible_moves.push [hor+2,ver] if hor == 2 && board[hor+2][ver] == " "
-			@possible_moves.push [hor+1,ver-1] if board[hor+1][ver-1].respond_to?(:colour) && board[hor+1][ver-1].colour != self.colour
-			@possible_moves.push [hor+1,ver+1] if board[hor+1][ver+1].respond_to?(:colour) && board[hor+1][ver+1].colour != self.colour
+			@possible_moves.push [hor+1,ver-1] if enemy? board,hor+1,ver-1
+			@possible_moves.push [hor+1,ver+1] if enemy? board,hor+1,ver+1
 		end
 		@possible_moves
 	end

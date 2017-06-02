@@ -18,6 +18,10 @@ while true
 	if turns > 0
 		puts "Do you want to save the game? (y/n)"
 		answer = gets.chomp
+		until answer.downcase == "y" || answer.downcase == "n"
+			puts "Choose y or n."
+			answer = gets.chomp
+		end
 		if answer.downcase == "y"
 			game.save
 		end
