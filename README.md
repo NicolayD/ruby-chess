@@ -4,6 +4,7 @@ This is a chess game based on the command line, which uses the unicode chess pie
 ![Alt text](chess_screen.png?raw=true "New game screenshot")
 
 Save game option available after each turn.  
+
 Only automatic draw checks implemented. Castling and en passant are not available yet.  
 
 Some specs have yet to be added.
