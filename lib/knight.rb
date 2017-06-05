@@ -19,7 +19,7 @@ class Knight
 	def possible_moves board,position=self.position
 		hor = position[0].to_i
 		ver = position[1].to_i
-		@possible_moves = []	# I have to refactor this to make it less cluttered.
+		@possible_moves = []
 
 		@possible_moves.push [hor-2,ver-1] if hor > 2 && ver > 1 && not_ally?(board,hor-2,ver-1)
 		@possible_moves.push [hor-2,ver+1] if hor > 2 && ver < 8 && not_ally?(board,hor-2,ver+1)

@@ -1,5 +1,4 @@
 require_relative 'moves'
-require_relative 'chess'
 
 class King
 	include Moves
@@ -20,7 +19,7 @@ class King
 	def possible_moves board,position=self.position
 		hor = position[0].to_i
 		ver = position[1].to_i
-		@possible_moves = []	# I have to refactor this to make it less cluttered.
+		@possible_moves = []
 
 		@possible_moves.push [hor+1,ver] if hor < 8 && not_ally?(board,hor+1,ver)
 		@possible_moves.push [hor,ver+1] if ver < 8 && not_ally?(board,hor,ver+1)

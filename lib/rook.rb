@@ -1,6 +1,8 @@
+require_relative 'moves'
 
 class Rook
 	attr_accessor :symbol, :colour, :position, :possible_moves
+	include Moves
 
 	def initialize colour,position
 		@colour = colour
@@ -21,45 +23,45 @@ class Rook
 
 		right = ver + 1
 		if right < 8
-			right_tile = board[hor][right]
-			while right < 8 && (right_tile == " " || (right_tile.respond_to?(:colour) && right_tile.colour != self.colour))
+#			right_tile = board[hor][right]
+			while right <= 8 && not_ally?(board,hor,right) # (right_tile == " " || (right_tile.respond_to?(:colour) && right_tile.colour != self.colour))
 				@possible_moves.push [hor,right]
-				break if right_tile.respond_to?(:colour) && right_tile.colour != self.colour
+				break if enemy?(board,hor,right) # right_tile.respond_to?(:colour) && right_tile.colour != self.colour
 				right += 1
-				right_tile = board[hor][right]
+#				right_tile = board[hor][right]
 			end
 		end
 
 		left = ver - 1
 		if left > 0
-			left_tile = board[hor][left]
-			while left > 0 && (left_tile == " " || (left_tile.respond_to?(:colour) && left_tile.colour != self.colour))
+	#		left_tile = board[hor][left]
+			while left > 0 && not_ally?(board,hor,left) # (left_tile == " " || (left_tile.respond_to?(:colour) && left_tile.colour != self.colour))
 				@possible_moves.push [hor,left]
-				break if left_tile.respond_to?(:colour) && left_tile.colour != self.colour
+				break if enemy?(board,hor,left) # left_tile.respond_to?(:colour) && left_tile.colour != self.colour
 				left -= 1
-				left_tile = board[hor][left]
+	#			left_tile = board[hor][left]
 			end
 		end
 
 		up = hor - 1
 		if up > 0
-			up_tile = board[up][ver]
-			while up > 0 && (up_tile == " " || (up_tile.respond_to?(:colour) && up_tile.colour != self.colour))
+#			up_tile = board[up][ver]
+			while up > 0 && not_ally?(board,up,ver) # (up_tile == " " || (up_tile.respond_to?(:colour) && up_tile.colour != self.colour))
 				@possible_moves.push [up,ver]
-				break if up_tile.respond_to?(:colour) && up_tile.colour != self.colour
+				break if enemy?(board,up,ver) # up_tile.respond_to?(:colour) && up_tile.colour != self.colour
 				up -= 1
-				up_tile = board[up][ver]
+	#			up_tile = board[up][ver]
 			end
 		end
 
 		down = hor + 1
 		if down <= 8
-			down_tile = board[down][ver]
-			while down <= 8 && (down_tile == " " || (down_tile.respond_to?(:colour) && down_tile.colour != self.colour))
+	#		down_tile = board[down][ver]
+			while down <= 8 && not_ally?(board,down,ver) # (down_tile == " " || (down_tile.respond_to?(:colour) && down_tile.colour != self.colour))
 				@possible_moves.push [down,ver]
-				break if down_tile.respond_to?(:colour) && down_tile.colour != self.colour
+				break if enemy?(board,down,ver) # down_tile.respond_to?(:colour) && down_tile.colour != self.colour
 				down += 1
-				down_tile = board[down][ver] if down <= 8
+	#			down_tile = board[down][ver] if down <= 8
 			end
 		end
 
