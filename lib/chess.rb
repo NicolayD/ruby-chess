@@ -121,6 +121,7 @@ class Chess
 				puts 'Your king is checked. Choose a proper move.'
 				@board[from[0]][from[1]] = @chosen_piece
 				@board[to[0]][to[1]] = chosen_position
+				@board[from[0]][from[1]].position = from
 				choose_piece
 				move
 				calculate_moves
@@ -139,7 +140,6 @@ class Chess
 			# Every tile itself is a hash with object ids for the pieces as keys.
 			# And numbers of time they reached that tile as values.
 
-
 			if !@chosen_piece.is_a?(Pawn)
 				if @tiles_reached.has_key?(to)
 					if @tiles_reached[to].has_key?(@chosen_piece.object_id)
@@ -152,7 +152,6 @@ class Chess
 					@tiles_reached[to][@chosen_piece.object_id] = 1
 				end
 			end
-
 		else
 			puts 'You cannot move there.'
 			puts 'Choose another move.'
