@@ -64,12 +64,12 @@ describe Chess do
 		end
 
 		it 'starts with no checked king' do
-			expect(game.white_checked).to be_false
-			expect(game.black_checked).to be_false
+			expect(game.white_checked).to be false
+			expect(game.black_checked).to be false
 		end
 
 		it 'starts with a false checkmate value' do
-			expect(game.checkmate).to be_false
+			expect(game.checkmate).to be false
 		end
 
 		it 'starts with an empty array for all possible white moves' do
@@ -152,7 +152,7 @@ describe Chess do
 
 	context '#check?' do
 		it 'returns false by default' do
-			expect(game.check?).to be_false
+			expect(game.check?).to be false
 		end
 
 		it 'returns true when the king is checked' do
@@ -164,13 +164,13 @@ describe Chess do
 			game.swap_players
 			game.chosen_piece = game.board[8][4] # White queen
 			game.move([8,4],[4,8])
-			expect(game.check?).to be_true
+			expect(game.check?).to be true
 		end
 	end
 
 	context '#checkmate?' do
 		it 'returns false by default' do
-			expect(game.checkmate?).to be_false
+			expect(game.checkmate?).to be false
 		end
 
 		it 'returns true when the king is checkmated' do
@@ -185,7 +185,7 @@ describe Chess do
 			game.swap_players
 			game.chosen_piece = game.board[1][4]
 			game.move([1,4],[5,8])
-			expect(game.checkmate?).to be_true
+			expect(game.checkmate?).to be true
 		end
 	end
 end
