@@ -7,7 +7,7 @@ require_relative 'knight'
 require_relative 'rook'
 require_relative 'save_game'
 
-STDOUT.sync = true	# For display in Git Bash
+# STDOUT.sync = true	# Uncomment if you use Git Bash on Windows
 
 class Chess
 	include SaveGame
