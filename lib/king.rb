@@ -30,7 +30,5 @@ class King
 		@possible_moves.push [hor-1,ver+1] if hor > 1 && ver < 8 && not_ally?(board,hor-1,ver+1)
 		@possible_moves.push [hor+1,ver-1] if hor < 8 && ver > 1 && not_ally?(board,hor+1,ver-1)
 		@possible_moves
-
-		p @possible_moves
 	end
 end

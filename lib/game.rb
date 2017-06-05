@@ -12,7 +12,7 @@ end
 
 turns = 0
 
-while true
+loop do
 	game.show_board
 
 	if turns > 0
