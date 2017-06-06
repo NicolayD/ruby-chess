@@ -1,2 +1,4 @@
 Style/Tab:
   Enabled: false
+IndentationWidth:
+  Enabled: false
