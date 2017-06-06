@@ -1,6 +1,5 @@
 # Module for save game and load game logic.
 # Used in chess.rb and game.rb
-
 module SaveGame
 	def load_game
 		saves = Dir.entries("saves")
