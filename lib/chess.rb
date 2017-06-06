@@ -11,8 +11,10 @@ require_relative 'save_game'
 
 class Chess
 	include SaveGame
-	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, :white_checked, :black_checked, :checkmate
-	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move, :draw_message, :tiles_reached
+	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, 
+	attr_accessor :white_checked, :black_checked, :checkmate
+	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move, 
+	attr_accessor :draw_message, :tiles_reached
 
 	def initialize
 		@board = [
