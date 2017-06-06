@@ -1,3 +1,6 @@
+# Module for save game and load game logic.
+# Used in chess.rb and game.rb
+
 module SaveGame
 	def load_game
 		saves = Dir.entries("saves")
@@ -14,7 +17,7 @@ module SaveGame
 	end
 
 	def save
-		Dir.mkdir("saves") unless Dir.exists?("saves")
+		Dir.mkdir("saves") unless Dir.exist?("saves")
 		puts "What do you want to call the game?"
 		filename = gets.chomp
 		File.open("saves/#{filename}.yml", "w") { |file| file.write(self.to_yaml) }
