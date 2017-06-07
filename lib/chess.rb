@@ -11,9 +11,9 @@ require_relative 'save_game'
 
 class Chess
 	include SaveGame
-	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to, 
+	attr_accessor :board, :current_player, :chosen_piece, :move_from, :move_to
 	attr_accessor :white_checked, :black_checked, :checkmate
-	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move, 
+	attr_accessor :all_white_moves, :all_black_moves, :no_capture_or_pawn_move
 	attr_accessor :draw_message, :tiles_reached
 
 	def initialize
@@ -62,17 +62,7 @@ class Chess
 
 	def convert_coordinates input
 		coordinates = []
-		case input[0].to_i	# Accept a string as an argument. First char is number, second char is a letter.
-		when 1 then coordinates << 8	# Horizontal
-		when 2 then coordinates << 7
-		when 3 then coordinates << 6
-		when 4 then coordinates << 5
-		when 5 then coordinates << 4
-		when 6 then coordinates << 3
-		when 7 then coordinates << 2
-		when 8 then coordinates << 1
-		end
-		case input[1].capitalize
+		case input[0].capitalize # Accept a string as an argument. First char is a letter, second char is a number.
 		when "A" then coordinates << 1	# Vertical
 		when "B" then coordinates << 2
 		when "C" then coordinates << 3
@@ -82,13 +72,23 @@ class Chess
 		when "G" then coordinates << 7
 		when "H" then coordinates << 8
 		end
-		coordinates
+		case input[1].to_i
+		when 1 then coordinates << 8	# Horizontal
+		when 2 then coordinates << 7
+		when 3 then coordinates << 6
+		when 4 then coordinates << 5
+		when 5 then coordinates << 4
+		when 6 then coordinates << 3
+		when 7 then coordinates << 2
+		when 8 then coordinates << 1
+		end
+		coordinates.reverse!
 	end
 
 	def choose_piece
 		puts "#{@current_player.capitalize}. Which piece do you want to move?"
 		from = gets.chomp
-		until from.size == 2 && (1..8).include?(from[0].to_i) && ("A".."H").include?(from[1].capitalize)
+		until from.size == 2 && ("A".."H").include?(from[0].capitalize) && (1..8).include?(from[1].to_i)
 			puts "Please choose proper coordinates."
 			from = gets.chomp
 		end
@@ -99,7 +99,7 @@ class Chess
 		until @chosen_piece != " " && @chosen_piece.respond_to?(:colour) && @chosen_piece.colour == @current_player
 			puts 'You must choose your own piece.'
 			from = gets.chomp
-			until from.size == 2 && (1..8).include?(from[0].to_i) && ("A".."H").include?(from[1].capitalize)
+			until from.size == 2 && ("A".."H").include?(from[0].capitalize) && (1..8).include?(from[1].to_i)
 				puts "Please choose proper coordinates."
 				from = gets.chomp
 			end
@@ -109,7 +109,7 @@ class Chess
 
 		puts 'Where do you want to move it?'
 		to = gets.chomp
-		until to.size == 2 && (0..8).include?(to[0].to_i) && ("A".."H").include?(to[1].capitalize)
+		until to.size == 2 && ("A".."H").include?(to[0].capitalize) && (0..8).include?(to[1].to_i)
 			puts 'Please choose proper coordinates.'
 			puts 'Where do you want to move it?'
 			to = gets.chomp

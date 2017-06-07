@@ -1,5 +1,7 @@
+require_relative 'moves'
 
 class Queen
+  include Moves
 	attr_accessor :symbol, :colour, :position
 
 	def initialize colour,position
@@ -20,113 +22,97 @@ class Queen
 		@possible_moves = []
 
 		right = ver + 1
-		if right <= 8
-			right_tile = board[hor][right]
-			while right <= 8 && (right_tile == " " || (right_tile.respond_to?(:colour) && right_tile.colour != self.colour))
-				@possible_moves.push [hor,right]
-				break if right_tile.respond_to?(:colour) && right_tile.colour != self.colour
-				right += 1
-				right_tile = board[hor][right]
-			end
-		end
+    if right < 8
+      while right <= 8 && not_ally?(board,hor,right)
+        @possible_moves.push [hor,right]
+        break if enemy?(board,hor,right)
+        right += 1
+      end
+    end
 
 		left = ver - 1
-		if left > 0
-			left_tile = board[hor][left]
-			while left > 0 && (left_tile == " " || (left_tile.respond_to?(:colour) && left_tile.colour != self.colour))
-				@possible_moves.push [hor,left]
-				break if left_tile.respond_to?(:colour) && left_tile.colour != self.colour
-				left -= 1
-				left_tile = board[hor][left]
-			end
-		end
+    if left > 0
+      while left > 0 && not_ally?(board,hor,left)
+        @possible_moves.push [hor,left]
+        break if enemy?(board,hor,left)
+        left -= 1
+      end
+    end
 
 		up = hor - 1
-		if up > 0
-			up_tile = board[up][ver]
-			while up > 0 && (up_tile == " " || (up_tile.respond_to?(:colour) && up_tile.colour != self.colour))
-				@possible_moves.push [up,ver]
-				break if up_tile.respond_to?(:colour) && up_tile.colour != self.colour
-				up -= 1
-				up_tile = board[up][ver]
-			end
-		end
+    if up > 0
+      while up > 0 && not_ally?(board,up,ver)
+        @possible_moves.push [up,ver]
+        break if enemy?(board,up,ver)
+        up -= 1
+      end
+    end
 
 		down = hor + 1
-		if down <= 8
-			down_tile = board[down][ver]
-			while down <= 8 && (down_tile == " " || (down_tile.respond_to?(:colour) && down_tile.colour != self.colour))
-				@possible_moves.push [down,ver]
-				break if down_tile.respond_to?(:colour) && down_tile.colour != self.colour
-				down += 1
-				down_tile = board[down][ver] if down <= 8
-			end
-		end
+    if down <= 8
+      while down <= 8 && not_ally?(board,down,ver)
+        @possible_moves.push [down,ver]
+        break if enemy?(board,down,ver)
+        down += 1
+      end
+    end
 
 		east = ver + 1
-		north = hor - 1
-		if east <= 8 && north > 0
-			north_east = board[north][east]
-			while east <= 8 && north > 0 && (north_east == " " || (north_east.respond_to?(:colour) && north_east.colour != self.colour))
-				north_east = board[north][east]
-				if north_east.respond_to?(:colour) && north_east.colour != self.colour
-					@possible_moves.push [north,east]
-					break
-				end
-				break if north_east.respond_to?(:colour) && north_east.colour == self.colour		
-				@possible_moves.push [north,east]
-				east += 1
-				north -= 1
-			end
-		end
+    north = hor - 1
+    if east <= 8 && north > 0
+      while east <= 8 && north > 0 && not_ally?(board,north,east)
+        if enemy?(board,north,east)
+          @possible_moves.push [north,east]
+          break
+        end
+        break if ally?(board,north,east)
+        @possible_moves.push [north,east]
+        east += 1
+        north -= 1
+      end
+    end
 		west = ver - 1
-		north = hor - 1
-		if west > 0 && north > 0
-			north_west = board[north][west]
-			while west > 0 && north > 0 && (north_west == " " || (north_west.respond_to?(:colour) && north_west.colour != self.colour))
-				north_west = board[north][west]
-				if north_west.respond_to?(:colour) && north_west.colour != self.colour
-					@possible_moves.push [north,west]
-					break
-				end
-				break if north_west.respond_to?(:colour) && north_west.colour == self.colour
-				@possible_moves.push [north,west]
-				west -= 1
-				north -= 1
-			end
-		end
+    north = hor - 1
+    if west > 0 && north > 0
+      while west > 0 && north > 0 && not_ally?(board,north,west)
+        if enemy?(board,north,west)
+          @possible_moves.push [north,west]
+          break
+        end
+        break if ally?(board,north,west)
+        @possible_moves.push [north,west]
+        west -= 1
+        north -= 1
+      end
+    end
 		south = hor + 1
-		east = ver + 1
-		if south <= 8 && east <= 8
-			south_east = board[south][east]
-			while south <= 8 && east <= 8 && (south_east == " " || (south_east.respond_to?(:colour) && south_east.colour != self.colour))
-				south_east = board[south][east]
-			  if south_east.respond_to?(:colour) && south_east.colour != self.colour
-			  	@possible_moves.push [south,east]
-			  	break
-			  end
-			  break if south_east.respond_to?(:colour) && south_east.colour == self.colour
-			  @possible_moves.push [south,east]
-				south += 1
-				east += 1
-			end
-		end
+    east = ver + 1
+    if south <= 8 && east <= 8
+      while south <= 8 && east <= 8 && not_ally?(board,south,east)
+        if enemy?(board,south,east)
+          @possible_moves.push [south,east]
+          break
+        end
+        break if ally?(board,south,east)
+        @possible_moves.push [south,east]
+        south += 1
+        east += 1
+      end
+    end
 		south = hor + 1
-		west = ver - 1
-		if south <= 8 && west > 0
-			south_west = board[south][west]
-			while south <= 8 && west > 0 && (south_west == " " || (south_west.respond_to?(:colour) && south_west.colour != self.colour))
-				south_west = board[south][west]
-				if south_west.respond_to?(:colour) && south_west.colour != self.colour
-					@possible_moves.push [south,west]
-					break
-				end
-				break if south_west.respond_to?(:colour) && south_west.colour == self.colour
-				@possible_moves.push [south,west]
-				south += 1
-				west -= 1
-			end
-		end
+    west = ver - 1
+    if south <= 8 && west > 0
+      while south <= 8 && west > 0 && not_ally?(board,south,west)
+        if enemy?(board,south,west)
+          @possible_moves.push [south,west]
+          break
+        end
+        break if ally?(board,south,west)
+        @possible_moves.push [south,west]
+        south += 1
+        west -= 1
+      end
+    end
 		@possible_moves
 	end
 end

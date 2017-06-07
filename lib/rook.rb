@@ -1,12 +1,12 @@
 require_relative 'moves'
 
 class Rook
-	attr_accessor :symbol, :colour, :position, :possible_moves
 	include Moves
+	attr_accessor :symbol, :colour, :position, :possible_moves
 
 	def initialize colour,position
 		@colour = colour
-		@position = position			# The position is going to look like [5,6] which represents the 5 row and 6 column
+		@position = position # The position is going to look like [5,6] which represents the 5 row and 6 column
 		if @colour == :white
 			@symbol = "\u2656"
 		elsif @colour == :black
@@ -23,45 +23,37 @@ class Rook
 
 		right = ver + 1
 		if right < 8
-#			right_tile = board[hor][right]
-			while right <= 8 && not_ally?(board,hor,right) # (right_tile == " " || (right_tile.respond_to?(:colour) && right_tile.colour != self.colour))
+			while right <= 8 && not_ally?(board,hor,right)
 				@possible_moves.push [hor,right]
-				break if enemy?(board,hor,right) # right_tile.respond_to?(:colour) && right_tile.colour != self.colour
+				break if enemy?(board,hor,right)
 				right += 1
-#				right_tile = board[hor][right]
 			end
 		end
 
 		left = ver - 1
 		if left > 0
-	#		left_tile = board[hor][left]
-			while left > 0 && not_ally?(board,hor,left) # (left_tile == " " || (left_tile.respond_to?(:colour) && left_tile.colour != self.colour))
+			while left > 0 && not_ally?(board,hor,left)
 				@possible_moves.push [hor,left]
-				break if enemy?(board,hor,left) # left_tile.respond_to?(:colour) && left_tile.colour != self.colour
+				break if enemy?(board,hor,left)
 				left -= 1
-	#			left_tile = board[hor][left]
 			end
 		end
 
 		up = hor - 1
 		if up > 0
-#			up_tile = board[up][ver]
-			while up > 0 && not_ally?(board,up,ver) # (up_tile == " " || (up_tile.respond_to?(:colour) && up_tile.colour != self.colour))
+			while up > 0 && not_ally?(board,up,ver)
 				@possible_moves.push [up,ver]
-				break if enemy?(board,up,ver) # up_tile.respond_to?(:colour) && up_tile.colour != self.colour
+				break if enemy?(board,up,ver)
 				up -= 1
-	#			up_tile = board[up][ver]
 			end
 		end
 
 		down = hor + 1
 		if down <= 8
-	#		down_tile = board[down][ver]
-			while down <= 8 && not_ally?(board,down,ver) # (down_tile == " " || (down_tile.respond_to?(:colour) && down_tile.colour != self.colour))
+			while down <= 8 && not_ally?(board,down,ver)
 				@possible_moves.push [down,ver]
-				break if enemy?(board,down,ver) # down_tile.respond_to?(:colour) && down_tile.colour != self.colour
+				break if enemy?(board,down,ver)
 				down += 1
-	#			down_tile = board[down][ver] if down <= 8
 			end
 		end
 
