@@ -1,6 +1,6 @@
 require_relative 'chess'
 require_relative 'save_game'
-include SaveGame
+include save_game
 
 puts 'Do you want to load a game? (y/n)'
 answer = gets.chomp
@@ -35,7 +35,7 @@ loop do
 	game.move
 
 	if game.checkmate
-		puts "Checkmate! #{game.current_player} wins."
+		puts "Checkmate! #{game.current_player.capitalize} wins."
 		game.show_board
 		exit
 	end
