@@ -1,22 +1,23 @@
 require_relative 'moves'
-
+# Class for Queen objects of both colours
 class Queen
   include Moves
 	attr_accessor :symbol, :colour, :position
 
-	def initialize colour,position
+  # The position will look like [5,6] which represents row 5 and column 6
+
+	def initialize(colour, position)
 		@colour = colour
-		@position = position			# The position is going to look like [5,6] which represents the 5 row and 6 column
+		@position = position
 		if @colour == :white
 			@symbol = "\u2655"
 		elsif @colour == :black
 			@symbol = "\u265B"
 		end
-
 		@possible_moves = []
 	end
 
-	def possible_moves board,position=self.position
+	def possible_moves(board, position=self.position)
 		hor = position[0].to_i
 		ver = position[1].to_i
 		@possible_moves = []
@@ -99,6 +100,7 @@ class Queen
         east += 1
       end
     end
+
 		south = hor + 1
     west = ver - 1
     if south <= 8 && west > 0
@@ -107,7 +109,7 @@ class Queen
           @possible_moves.push [south, west]
           break
         end
-        break if ally?(board,south, west)
+        break if ally?(board, south, west)
         @possible_moves.push [south, west]
         south += 1
         west -= 1

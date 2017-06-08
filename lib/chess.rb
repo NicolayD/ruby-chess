@@ -35,7 +35,7 @@ class Chess
 							['1',  Rook.new(:white, [8,1]), Knight.new(:white, [8,2]),
 							Bishop.new(:white, [8,3]), Queen.new(:white, [8,4]), King.new(:white, [8,5]),
 							Bishop.new(:white, [8,6]), Knight.new(:white, [8,7]), Rook.new(:white, [8,8])]
-						 ]
+		]
 
 		@current_player = :white
 		@move_to = []
@@ -63,14 +63,14 @@ class Chess
 	def convert_coordinates input
 		coordinates = []
 		case input[0].capitalize # Accept a string as an argument. First char is a letter, second char is a number.
-		when "A" then coordinates << 1	# Vertical
-		when "B" then coordinates << 2
-		when "C" then coordinates << 3
-		when "D" then coordinates << 4
-		when "E" then coordinates << 5
-		when "F" then coordinates << 6
-		when "G" then coordinates << 7
-		when "H" then coordinates << 8
+		when 'A' then coordinates << 1	# Vertical
+		when 'B' then coordinates << 2
+		when 'C' then coordinates << 3
+		when 'D' then coordinates << 4
+		when 'E' then coordinates << 5
+		when 'F' then coordinates << 6
+		when 'G' then coordinates << 7
+		when 'H' then coordinates << 8
 		end
 		case input[1].to_i
 		when 1 then coordinates << 8	# Horizontal
@@ -88,8 +88,8 @@ class Chess
 	def choose_piece
 		puts "#{@current_player.capitalize}. Which piece do you want to move?"
 		from = gets.chomp
-		until from.size == 2 && ("A".."H").include?(from[0].capitalize) && (1..8).include?(from[1].to_i)
-			puts "Please choose proper coordinates."
+		until from.size == 2 && ('A'..'H').include?(from[0].capitalize) && (1..8).include?(from[1].to_i)
+			puts 'Please choose proper coordinates.'
 			from = gets.chomp
 		end
 
@@ -99,8 +99,8 @@ class Chess
 		until @chosen_piece != " " && @chosen_piece.respond_to?(:colour) && @chosen_piece.colour == @current_player
 			puts 'You must choose your own piece.'
 			from = gets.chomp
-			until from.size == 2 && ("A".."H").include?(from[0].capitalize) && (1..8).include?(from[1].to_i)
-				puts "Please choose proper coordinates."
+			until from.size == 2 && ('A'..'H').include?(from[0].capitalize) && (1..8).include?(from[1].to_i)
+				puts 'Please choose proper coordinates.'
 				from = gets.chomp
 			end
 			@move_from = convert_coordinates from
@@ -109,7 +109,7 @@ class Chess
 
 		puts 'Where do you want to move it?'
 		to = gets.chomp
-		until to.size == 2 && ("A".."H").include?(to[0].capitalize) && (0..8).include?(to[1].to_i)
+		until to.size == 2 && ('A'..'H').include?(to[0].capitalize) && (0..8).include?(to[1].to_i)
 			puts 'Please choose proper coordinates.'
 			puts 'Where do you want to move it?'
 			to = gets.chomp
@@ -196,16 +196,16 @@ class Chess
 
 	def draw?	# Add separate messages for the different draws.
 		if @no_capture_or_pawn_move == 75	# Automatic draw at 75 moves without a capture or a pawn move
-			@draw_message = "No piece captured or pawn moved for 75 moves."
+			@draw_message = 'No piece captured or pawn moved for 75 moves.'
 			return true
 		end
 		calculate_moves
 		if !@white_checked && @all_white_moves.empty?
-			@draw_message = "Stalemate."
+			@draw_message = 'Stalemate.'
 			return true
 		end
 		if !@black_checked && @all_black_moves.empty?
-			@draw_message = "Stalemate."
+			@draw_message = 'Stalemate.'
 			return true 
 		end
 		
@@ -214,11 +214,10 @@ class Chess
 
 		@tiles_reached.each do |tile,pieces|
 			if pieces.has_value? 5
-				@draw_message = "Fivefold repetition of the same move."
+				@draw_message = 'Fivefold repetition of the same move.'
 				return true
 			end
 		end
-
 		false
 	end
 
@@ -249,10 +248,12 @@ class Chess
 	end
 
 	def checkmate?
-		if @white_checked && @current_player == :black # Because the check is at the end of the turn, after the move of the enemy.	
+		# Because the check is at the end of the turn, after the move of the enemy.
+		if @white_checked && @current_player == :black	
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|																	
-				row.each_with_index do |piece,ver| 	# As the next works only for the king, the 'hor' and 'ver' coordinates will be his.
+				row.each_with_index do |piece,ver|
+					# As the next works only for the king, the 'hor' and 'ver' coordinates will be his.
 					if piece.is_a?(King) && piece.colour == :white
 						if piece.possible_moves(@board).empty?
 						  @checkmate = true
@@ -260,11 +261,13 @@ class Chess
 							@checkmate = true
 							@all_white_moves.each do |pos_move|
 								checked_piece = @board[pos_move[0]][pos_move[1]]
-								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1	# This means it's only the king's move.
+								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1
+									# This means it's only the king's move.
 									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]	
 									check?
 								else
-									@board[pos_move[0]][pos_move[1]] = :X	# Doesn't matter what it is, it just has to not be a piece of the enemy.
+									# Doesn't matter what it is, it just has to not be a piece of the enemy.
+									@board[pos_move[0]][pos_move[1]] = :X
 									check?
 								end
 								if !@white_checked
@@ -279,7 +282,8 @@ class Chess
 				end
 			end
 			end
-		elsif @black_checked && @current_player == :white # Because the check is at the end of the turn.
+		# The check is at the end of the turn.	
+		elsif @black_checked && @current_player == :white
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|
 				row.each_with_index do |piece,ver|
@@ -290,11 +294,14 @@ class Chess
 							@checkmate = true
 							@all_black_moves.each do |pos_move|
 								checked_piece = @board[pos_move[0]][pos_move[1]]
-								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1	# This means it's only the king's move.
-									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]	# Hence this is the only case we must use the king himself when we check for check.
+								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1
+									# This means it's only the king's move.
+									# Hence this is the only case we must use the king himself when we check for check.
+									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]
 									check?
 								else
-									@board[pos_move[0]][pos_move[1]] = :X	# Doesn't matter what it is, it just has to not be a piece of the enemy.
+									# Doesn't matter what it is, it just has to not be a piece of the enemy.
+									@board[pos_move[0]][pos_move[1]] = :X
 									check?
 								end
 								if !@black_checked

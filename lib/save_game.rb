@@ -7,18 +7,18 @@ module SaveGame
 		puts "Which game do you want to load?"
 
 		filename = gets.chomp
-		until saves.include?(filename + ".yml")
+		until saves.include?(filename + '.yml')
 			puts "Please enter a proper filename."
 			filename = gets.chomp
 		end
 
-		loaded_game = YAML::load_file("saves/#{filename}.yml")
+		loaded_game = YAML.load_file("saves/#{filename}.yml")
 	end
 
-	def save
-		Dir.mkdir("saves") unless Dir.exist?("saves")
+	def save(game)
+		Dir.mkdir('saves') unless Dir.exist?('saves')
 		puts "What do you want to call the game?"
 		filename = gets.chomp
-		File.open("saves/#{filename}.yml", "w") { |file| file.write(self.to_yaml) }
+		File.open("saves/#{filename}.yml", 'w') { |file| file.write(game.to_yaml) }
 	end
 end

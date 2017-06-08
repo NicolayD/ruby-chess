@@ -16,27 +16,27 @@ module Moves
 		board[x][y].respond_to?(:colour) && board[x][y].colour == self.colour ? true : false
 	end
 
-  def move_up
+  def move_up board,hor,ver
   end
 
-  def move_down
+  def move_down board,hor,ver
   end
 
-  def move_left
+  def move_left board,hor,ver
   end
 
-  def move_right
+  def move_right board,hor,ver
   end
 
-  def move_north_east
+  def move_north_east board,hor,ver
   end
 
-  def move_north_west
+  def move_north_west board,hor,ver
   end
 
-  def move_south_east
+  def move_south_east board,hor,ver
   end
 
-  def move_south_west
+  def move_south_west board,hor,ver
   end
 end
