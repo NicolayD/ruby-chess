@@ -14,12 +14,11 @@ class Pawn
 		elsif @colour == :black
 			@symbol = "\u265F"
 		end
-
 		@possible_moves = []
 	end
 
 	# Create an array with all possible moves such as [[3,3],[4,5], etc.] 
-	def possible_moves(board, position=self.position)
+	def possible_moves(board, position = self.position)
 		hor = position[0].to_i
 		ver = position[1].to_i
 		@possible_moves = []

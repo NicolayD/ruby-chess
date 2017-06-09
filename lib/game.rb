@@ -4,7 +4,7 @@ include SaveGame
 
 puts 'Do you want to load a game? (y/n)'
 answer = gets.chomp
-if answer.downcase == "y"
+if answer.downcase == 'y'
 	game = load_game
 else
 	game = Chess.new
@@ -16,13 +16,13 @@ loop do
 	game.show_board
 
 	if turns > 0
-		puts "Do you want to save the game? (y/n)"
+		puts 'Do you want to save the game? (y/n)'
 		answer = gets.chomp
-		until answer.downcase == "y" || answer.downcase == "n"
+		until answer.downcase == 'y' || answer.downcase == 'n'
 			puts "Choose y or n."
 			answer = gets.chomp
 		end
-		if answer.downcase == "y"
+		if answer.downcase == 'y'
 			save(game)
 		end
 	end
@@ -41,7 +41,7 @@ loop do
 	end
 
 	if game.draw?
-		puts "Draw."
+		puts 'Draw.'
 		puts game.draw_message
 		game.show_board
 		exit

@@ -14,11 +14,10 @@ class Knight
 		elsif @colour == :black
 			@symbol = "\u265E"
 		end
-
 		@possible_moves = []
 	end
 
-	def possible_moves(board, position=self.position)
+	def possible_moves(board, position = self.position)
 		hor = position[0].to_i
 		ver = position[1].to_i
 		@possible_moves = []

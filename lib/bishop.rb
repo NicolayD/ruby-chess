@@ -17,7 +17,7 @@ class Bishop
 		@possible_moves = []
 	end
 
-	def possible_moves(board, position=self.position)
+	def possible_moves(board, position = self.position)
 		hor = position[0].to_i
 		ver = position[1].to_i
 		@possible_moves = []
@@ -29,7 +29,7 @@ class Bishop
     move_south_east(board, @possible_moves, hor, ver)
 
     move_south_west(board, @possible_moves, hor, ver)
-    
+
 		@possible_moves
 	end
 end

@@ -6,3 +6,5 @@ Layout/IndentationConsistency:
   Enabled: false
 Layout/SpaceAroundOperators:
   Enabled: false
+Layout/CommentIndentation:
+  Enabled: false
