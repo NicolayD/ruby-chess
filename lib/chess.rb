@@ -171,6 +171,7 @@ class Chess
 			move
 		end
 
+		calculate_moves
 		checkmate?
 
 		if @chosen_piece.is_a?(Pawn)
@@ -230,9 +231,11 @@ class Chess
 				moves = piece.possible_moves(@board) if piece.respond_to?(:colour)
 				if !moves.nil?
 					moves.each do |pos_move|
-						if @board[pos_move[0]][pos_move[1]].is_a?(King) && @board[pos_move[0]][pos_move[1]].colour == :white
+						x = pos_move[0]
+						y = pos_move[1]
+						if @board[x][y].is_a?(King) && @board[x][y].colour == :white
 							@white_checked = true
-						elsif @board[pos_move[0]][pos_move[1]].is_a?(King) && @board[pos_move[0]][pos_move[1]].colour == :black
+						elsif @board[x][y].is_a?(King) && @board[x][y].colour == :black
 							@black_checked = true
 						end
 					end
@@ -240,7 +243,7 @@ class Chess
 			end
 		end
 
-		if @white_checked == true || @black_checked == true
+		if @white_checked || @black_checked
 			return true
 		else
 			return false
@@ -249,33 +252,29 @@ class Chess
 
 	def checkmate?
 		# Because the check is at the end of the turn, after the move of the enemy.
-		if @white_checked && @current_player == :black	
+		if @white_checked && @current_player == :black
+			@checkmate = true
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|																	
 				row.each_with_index do |piece,ver|
-					# As the next works only for the king, the 'hor' and 'ver' coordinates will be his.
-					if piece.is_a?(King) && piece.colour == :white
-						if piece.possible_moves(@board).empty?
-						  @checkmate = true
-						else
-							@checkmate = true
-							@all_white_moves.each do |pos_move|
-								checked_piece = @board[pos_move[0]][pos_move[1]]
-								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1
-									# This means it's only the king's move.
-									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]	
-									check?
-								else
-									# Doesn't matter what it is, it just has to not be a piece of the enemy.
-									@board[pos_move[0]][pos_move[1]] = :X
-									check?
-								end
-								if !@white_checked
-									@checkmate = false																					
-									@board[pos_move[0]][pos_move[1]] = checked_piece
-									throw :no_checkmate
-								end
-								@board[pos_move[0]][pos_move[1]] = checked_piece
+					if piece.respond_to?(:colour) && piece.colour == :white
+						moves = piece.possible_moves(@board)
+						moves.each do |pos_move|
+							x = pos_move[0]
+							y = pos_move[1]
+							# Skip when a possible move is an enemy King.
+							# It's in the possible moves because of the check check,
+							# but we shouldn't count him as a real possible move.
+							next if @board[x][y].is_a?(King)
+							checked_place = @board[x][y]
+							@board[x][y] = @board[hor][ver]
+							@board[hor][ver] = ' '
+							check?
+							@board[hor][ver] = @board[x][y]
+							@board[x][y] = checked_place
+							if !@white_checked
+								@checkmate = false
+								throw :no_checkmate
 							end
 						end
 					end
@@ -284,32 +283,26 @@ class Chess
 			end
 		# The check is at the end of the turn.	
 		elsif @black_checked && @current_player == :white
+			@checkmate = true
 			catch(:no_checkmate) do
 			@board.each_with_index do |row,hor|
 				row.each_with_index do |piece,ver|
-					if piece.is_a?(King) && piece.colour == :black
-						if piece.possible_moves(@board).empty?
-							@checkmate = true
-						else
-							@checkmate = true
-							@all_black_moves.each do |pos_move|
-								checked_piece = @board[pos_move[0]][pos_move[1]]
-								if piece.possible_moves(@board).include?(pos_move) && piece.possible_moves(@board).count(pos_move) == 1
-									# This means it's only the king's move.
-									# Hence this is the only case we must use the king himself when we check for check.
-									@board[pos_move[0]][pos_move[1]] = @board[hor][ver]
-									check?
-								else
-									# Doesn't matter what it is, it just has to not be a piece of the enemy.
-									@board[pos_move[0]][pos_move[1]] = :X
-									check?
-								end
-								if !@black_checked
-									@checkmate = false
-									@board[pos_move[0]][pos_move[1]] = checked_piece
-									throw :no_checkmate
-								end
-								@board[pos_move[0]][pos_move[1]] = checked_piece
+					if piece.respond_to?(:colour) && piece.colour == :black
+						moves = piece.possible_moves(@board)
+						moves.each do |pos_move|
+							x = pos_move[0]
+							y = pos_move[1]
+							# Skip when a possible move is an enemy King.
+							next if @board[x][y].is_a?(King)
+							checked_place = @board[x][y]
+							@board[x][y] = @board[hor][ver]
+							@board[hor][ver] = ' '
+							check?
+							@board[hor][ver] = @board[x][y]
+							@board[x][y] = checked_place
+							if !@black_checked
+								@checkmate = false
+								throw :no_checkmate
 							end
 						end
 					end

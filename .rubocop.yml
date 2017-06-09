@@ -1,8 +1,8 @@
-Style/Tab:
+Layout/Tab:
   Enabled: false
 IndentationWidth:
   Enabled: false
-Style/IndentationConsistency:
+Layout/IndentationConsistency:
   Enabled: false
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   Enabled: false
