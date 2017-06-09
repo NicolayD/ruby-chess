@@ -16,6 +16,9 @@ module Moves
 		board[x][y].respond_to?(:colour) && board[x][y].colour == self.colour ? true : false
 	end
 
+  # The following methods add coordinates
+  # for the possible moves of queens, rooks, and bishops
+
   def move_up(board, moves_array, hor, ver)
     up = hor - 1
     if up > 0
