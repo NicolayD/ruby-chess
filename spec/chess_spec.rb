@@ -107,14 +107,14 @@ describe Chess do
 
 	context '#convert_coordinates' do
 		it 'converts normal chess coordinates to board array ones' do
-			expect(game.convert_coordinates("2B")).to eq([7,2])
-			expect(game.convert_coordinates("1H")).to eq([8,8])
-			expect(game.convert_coordinates("7D")).to eq([2,4])
-			expect(game.convert_coordinates("8F")).to eq([1,6])
-			expect(game.convert_coordinates("3A")).to eq([6,1])
-			expect(game.convert_coordinates("4C")).to eq([5,3])
-			expect(game.convert_coordinates("5G")).to eq([4,7])
-			expect(game.convert_coordinates("6E")).to eq([3,5])
+			expect(game.convert_coordinates("B2")).to eq([7,2])
+			expect(game.convert_coordinates("H1")).to eq([8,8])
+			expect(game.convert_coordinates("D7")).to eq([2,4])
+			expect(game.convert_coordinates("F8")).to eq([1,6])
+			expect(game.convert_coordinates("A3")).to eq([6,1])
+			expect(game.convert_coordinates("C4")).to eq([5,3])
+			expect(game.convert_coordinates("G5")).to eq([4,7])
+			expect(game.convert_coordinates("E6")).to eq([3,5])
 		end
 	end
 
